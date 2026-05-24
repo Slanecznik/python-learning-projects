@@ -1,55 +1,96 @@
-# импортируем инструменты для Telegram-бота
+import os
+
+from dotenv import load_dotenv
+
+from telegram import Update
 from telegram.ext import (
     Application,
-    CommandHandler
+    CommandHandler,
+    MessageHandler,
+    filters,
+    ContextTypes
 )
+
+# загружаем .env
+load_dotenv()
+
+# берём токен
+TOKEN = os.getenv("BOT_TOKEN")
 
 
 # -------- КОМАНДА /start --------
-def start(update, context):
 
-    # бот отправляет сообщение
-    update.message.reply_text(
-        "Привет, Владимир 😄 Я твой первый Telegram-бот!"
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Привет 👋\n"
+        "Я твой первый Telegram-бот."
     )
 
 
 # -------- КОМАНДА /help --------
-def help_command(update, context):
 
-    # бот отправляет список команд
-    update.message.reply_text(
-        "Команды:\n/start\n/help"
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Команды:\n"
+        "/start\n"
+        "/help\n"
+        "/about"
     )
 
 
-# -------- TOKEN БОТА --------
+# -------- КОМАНДА /about --------
 
-# сюда вставляем TOKEN из BotFather
-TOKEN = "8903619367:AAFVDIQIfC-rsw1FlolcIpBjUfI-qhK8WXY"
+async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Я бот, которого создал Владимир 😎"
+    )
 
+
+# -------- ОТВЕТ НА ЛЮБОЙ ТЕКСТ --------
+
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    user_message = update.message.text.lower()
+
+    # приветствие
+    if "привет" in user_message:
+        await update.message.reply_text(
+            "Привет 😎"
+        )
+
+    # как делаы
+    elif "как дела" in user_message:
+        await update.message.reply_text(
+            "У меня всё отлично 🚀"
+        )
+
+    # python
+    elif "python" in user_message:
+        await update.message.reply_text(
+            "Python — лучший язык для старта 🔥"
+        )
+
+    # если ничего не найдено
+    else:
+        await update.message.reply_text(
+            f"Ты написал: {user_message}"
+        )
 
 # -------- СОЗДАЁМ БОТА --------
 
-# создаём приложение
 app = Application.builder().token(TOKEN).build()
 
+# команды
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("help", help_command))
+app.add_handler(CommandHandler("about", about))
 
-# если человек написал /start
-# вызвать функцию start
+# обычные сообщения
 app.add_handler(
-    CommandHandler("start", start)
+    MessageHandler(filters.TEXT, handle_message)
 )
 
+# запуск
+print("Бот запущен 🚀")
 
-# если человек написал /help
-# вызвать функцию help_command
-app.add_handler(
-    CommandHandler("help", help_command)
-)
-
-
-# -------- ЗАПУСК БОТА --------
-
-# бот начинает работать
 app.run_polling()
