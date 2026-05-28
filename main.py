@@ -1,195 +1,110 @@
-# ==================================================
-# ИМПОРТЫ
-# ==================================================
+# ========= ИМПОРТЫ =========
 
-# os
-# нужен для работы с переменными окружения (.env)
-import os
+# работа со временем
+from datetime import datetime
 
-# load_dotenv()
-# загружает переменные из файла .env
+# загрузка переменных из .env
 from dotenv import load_dotenv
 
-# Update
-# объект с информацией о сообщении пользователя
+# работа с переменными окружения
+import os
+
+# импорт объектов Telegram
 from telegram import Update
 
-# telegram.ext
-# инструменты для создания логики бота
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+# импорт инструментов Telegram-бота
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    ContextTypes,
+)
 
+# ========= ЗАГРУЖАЕМ .ENV =========
 
-# ==================================================
-# ЗАГРУЖАЕМ .ENV
-# ==================================================
-
-# читаем файл .env
+# загружаем секреты из файла .env
 load_dotenv()
 
-# получаем BOT_TOKEN из .env
+# получаем токен бота
 TOKEN = os.getenv("BOT_TOKEN")
 
+# ========= КОМАНДА /start =========
 
-# ==================================================
-# КОМАНДА /start
-# ==================================================
-
-# async
-# асинхронная функция
-# бот может одновременно работать со многими людьми
-
+# async = функция может работать асинхронно
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # reply_text()
-    # отправляет сообщение пользователю
+    # reply_text() отправляет сообщение пользователю
     await update.message.reply_text(
-        "Привет 👋\n"
-        "Я твой Telegram-бот 😎"
+        "Привет! 👋\n"
+        "Я твой Telegram-бот.\n\n"
+        "Напиши /help"
     )
 
-
-# ==================================================
-# КОМАНДА /help
-# ==================================================
+# ========= КОМАНДА /help =========
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(
-        "Доступные команды:\n"
-        "/start\n"
-        "/help\n"
-        "/about"
+        "📚 Команды бота:\n\n"
+        "/start - запуск бота\n"
+        "/help - список команд\n"
+        "/about - информация\n"
+        "/time - текущее время"
     )
 
-
-# ==================================================
-# КОМАНДА /about
-# ==================================================
+# ========= КОМАНДА /about =========
 
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(
-        "Меня создал Владимир 🔥"
+        "🤖 Это мой первый backend-проект.\n"
+        "Бот написан на Python."
     )
 
+# ========= КОМАНДА /time =========
 
-# ==================================================
-# ФУНКЦИЯ АНАЛИЗА СООБЩЕНИЙ
-# ==================================================
+async def time_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-# handle_message()
-# главная функция обработки текста
+    # получаем текущее время
+    now = datetime.now()
 
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # форматируем время красиво
+    current_time = now.strftime("%H:%M:%S")
 
-    # text
-    # сообщение пользователя
+    await update.message.reply_text(
+        f"⏰ Сейчас время: {current_time}"
+    )
 
-    # lower()
-    # переводит текст в маленькие буквы
-    # чтобы "ПРИВЕТ" и "привет" работали одинаково
+# ========= СОЗДАЁМ ПРИЛОЖЕНИЕ =========
 
-    user_message = update.message.text.lower()
-
-
-    # ==================================================
-    # ЛОГИКА БОТА
-    # ==================================================
-
-    # if
-    # проверка условия
-
-    if "привет" in user_message:
-
-        await update.message.reply_text(
-            "И тебе привет 😎"
-        )
-
-
-    # elif
-    # дополнительная проверка
-
-    elif "как дела" in user_message:
-
-        await update.message.reply_text(
-            "У меня всё отлично 🚀"
-        )
-
-
-    elif "python" in user_message:
-
-        await update.message.reply_text(
-            "Python отлично подходит для backend разработки 🔥"
-        )
-
-
-    elif "бот" in user_message:
-
-        await update.message.reply_text(
-            "Да, я настоящий Telegram-бот 😎"
-        )
-
-
-    # else
-    # выполняется если условия выше не подошли
-
-    else:
-
-        await update.message.reply_text(
-            f"Ты написал: {user_message}"
-        )
-
-
-# ==================================================
-# СОЗДАЁМ ПРИЛОЖЕНИЕ
-# ==================================================
-
-# Application
-# главный объект бота
-
-# builder()
-# создаёт приложение
-
-# token(TOKEN)
-# подключение к Telegram API
-
+# создаём Telegram-приложение
 app = Application.builder().token(TOKEN).build()
 
+# ========= HANDLERS =========
 
-# ==================================================
-# ПОДКЛЮЧАЕМ КОМАНДЫ
-# ==================================================
+# если человек написал /start
+# вызывается функция start()
+app.add_handler(
+    CommandHandler("start", start)
+)
 
-# CommandHandler
-# ловит команды типа /start
+# если человек написал /help
+app.add_handler(
+    CommandHandler("help", help_command)
+)
 
-app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler("help", help_command))
-app.add_handler(CommandHandler("about", about))
+# если человек написал /about
+app.add_handler(
+    CommandHandler("about", about)
+)
 
+# если человек написал /time
+app.add_handler(
+    CommandHandler("time", time_command)
+)
 
-# ==================================================
-# ОБРАБОТКА ОБЫЧНОГО ТЕКСТА
-# ==================================================
-
-# MessageHandler
-# обрабатывает обычные сообщения
-
-# filters.TEXT
-# только текст
-
-app.add_handler(MessageHandler(filters.TEXT, handle_message))
-
-
-# ==================================================
-# ЗАПУСК БОТА
-# ==================================================
+# ========= ЗАПУСК БОТА =========
 
 print("Бот запущен 🚀")
 
-# run_polling()
-# бесконечный цикл:
-# бот постоянно спрашивает Telegram:
-# "Есть новые сообщения?"
-
+# запускаем бесконечную работу бота
 app.run_polling()
