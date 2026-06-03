@@ -16,7 +16,9 @@ from telegram import Update
 from telegram.ext import (
     Application,
     CommandHandler,
+    MessageHandler,
     ContextTypes,
+    filters,
 )
 
 # ========= ЗАГРУЖАЕМ .ENV =========
@@ -74,6 +76,43 @@ async def time_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"⏰ Сейчас время: {current_time}"
     )
 
+# ========= ОБЫЧНЫЕ СООБЩЕНИЯ =========
+
+# Эта функция вызывается,
+# когда пользователь пишет обычное сообщение
+
+async def text_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    # Получаем текст пользователя
+    user_text = update.message.text.lower()
+
+    # Если в сообщении есть слово "привет"
+    if "привет" in user_text:
+
+        await update.message.reply_text(
+            "Привет! 👋"
+        )
+
+    # Если в сообщении есть фраза "как дела"
+    elif "как дела" in user_text:
+
+        await update.message.reply_text(
+            "Отлично 😎"
+        )
+
+    # Если в сообщении есть слово python
+    elif "python" in user_text:
+
+        await update.message.reply_text(
+            "Лучший язык для старта 🔥"
+        )
+
+    # Если ничего не подошло
+    else:
+
+        await update.message.reply_text(
+            "Я пока не знаю такой фразы 🤔"
+        )
 # ========= СОЗДАЁМ ПРИЛОЖЕНИЕ =========
 
 # создаём Telegram-приложение
@@ -100,6 +139,15 @@ app.add_handler(
 # если человек написал /time
 app.add_handler(
     CommandHandler("time", time_command)
+)
+
+# Обрабатываем обычный текст
+
+app.add_handler(
+    MessageHandler(
+        filters.TEXT & ~filters.COMMAND,
+        text_message
+    )
 )
 
 # ========= ЗАПУСК БОТА =========
