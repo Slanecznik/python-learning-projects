@@ -107,6 +107,25 @@ async def text_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Лучший язык для старта 🔥"
         )
 
+    elif "бот" in user_text:
+
+        await update.message.reply_text(
+            "Да, я Telegram-бот 🤖"
+        )
+
+    elif "такси" in user_text:
+
+        await update.message.reply_text(
+            "Владимир сейчас работает в такси 🚕"
+        )
+
+    elif "лодзь" in user_text:
+
+        await update.message.reply_text(
+            "Лодзь — город в Польше 🇵🇱"
+        )
+
+
     # Если ничего не подошло
     else:
 
