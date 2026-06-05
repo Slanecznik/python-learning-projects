@@ -31,13 +31,15 @@ TOKEN = os.getenv("BOT_TOKEN")
 
 # ========= КОМАНДА /start =========
 
-# async = функция может работать асинхронно
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # reply_text() отправляет сообщение пользователю
+    # Получаем имя пользователя из Telegram
+    name = update.effective_user.first_name
+
+    # Отправляем персональное приветствие
     await update.message.reply_text(
-        "Привет! 👋\n"
-        "Я твой Telegram-бот.\n\n"
+        f"Привет, {name}! 👋\n\n"
+        "Я твой Telegram-бот.\n"
         "Напиши /help"
     )
 
