@@ -64,6 +64,21 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Бот написан на Python."
     )
 
+# ========= КОМАНДА /me =========
+
+async def me(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    # Получаем имя пользователя
+    name = update.effective_user.first_name
+
+    # Получаем username
+    username = update.effective_user.username
+
+    await update.message.reply_text(
+        f"Имя: {name}\n"
+        f"Username: @{username}"
+    )
+
 # ========= КОМАНДА /time =========
 
 async def time_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -157,6 +172,8 @@ app.add_handler(
     CommandHandler("about", about)
 )
 
+app.add_handler(CommandHandler("me", me))
+
 # если человек написал /time
 app.add_handler(
     CommandHandler("time", time_command)
@@ -170,6 +187,8 @@ app.add_handler(
         text_message
     )
 )
+
+
 
 # ========= ЗАПУСК БОТА =========
 
