@@ -68,15 +68,14 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def me(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # Получаем имя пользователя
     name = update.effective_user.first_name
-
-    # Получаем username
     username = update.effective_user.username
+    user_id = update.effective_user.id
 
     await update.message.reply_text(
         f"Имя: {name}\n"
-        f"Username: @{username}"
+        f"Username: @{username}\n"
+        f"ID: {user_id}"
     )
 
 # ========= КОМАНДА /time =========
