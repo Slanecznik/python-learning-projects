@@ -42,7 +42,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ["/about", "информация о проекте"],
         ["/time", "текущее время"],
         ["/me", "данные пользователя"],
-        ["/myid", "Telegram ID"]
+        ["/myid", "Telegram ID"],
+        ["/users", "список пользователей"]
     ]
 
     message = "📚 Команды бота:\n\n"
@@ -87,6 +88,24 @@ async def myid(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"Твой Telegram ID: {user_id}"
     )
+
+# ========= КОМАНДА /users =========
+
+async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    users_list = [
+        "Владимир",
+        "Анна",
+        "Иван"
+    ]
+
+    message = "👥 Пользователи:\n\n"
+
+    for user in users_list:
+
+        message += f"• {user}\n"
+
+    await update.message.reply_text(message)
 
 # ========= КОМАНДА /time =========
 
@@ -173,6 +192,8 @@ app.add_handler(
 app.add_handler(
     CommandHandler("myid", myid)
 )
+
+app.add_handler(CommandHandler("users", users))
 
 app.add_handler(
     CommandHandler("time", time_command)
