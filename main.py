@@ -43,7 +43,10 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ["/time", "текущее время"],
         ["/me", "данные пользователя"],
         ["/myid", "Telegram ID"],
-        ["/users", "список пользователей"]
+        ["/users", "список пользователей"],
+        ["/count", "количество пользователей"],
+        ["/jobs", "список профессий"],
+        ["/profiles", "профили пользователей"]
     ]
 
     message = "📚 Команды бота:\n\n"
@@ -94,16 +97,68 @@ async def myid(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     users_list = [
-        "Владимир",
-        "Анна",
-        "Иван"
+        ["Владимир", "Такси"],
+        ["Анна", "Дизайнер"],
+        ["Иван", "Программист"]
     ]
 
     message = "👥 Пользователи:\n\n"
 
     for user in users_list:
 
-        message += f"• {user}\n"
+        message += f"{user[0]} — {user[1]}\n"
+
+    await update.message.reply_text(message)
+
+# ========= КОМАНДА /count =========
+
+async def count(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    users_list = [
+        ["Владимир", "Такси"],
+        ["Анна", "Дизайнер"],
+        ["Иван", "Программист"]
+    ]
+
+    users_count = len(users_list)
+
+    await update.message.reply_text(
+        f"Всего пользователей: {users_count}"
+    )
+
+# ========= КОМАНДА /jobs =========
+
+async def jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    users_list = [
+        ["Владимир", "Такси"],
+        ["Анна", "Дизайнер"],
+        ["Иван", "Программист"]
+    ]
+
+    message = "💼 Профессии:\n\n"
+
+    for user in users_list:
+
+        message += f"• {user[1]}\n"
+
+    await update.message.reply_text(message)
+
+# ========= КОМАНДА /profiles =========
+
+async def profiles(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    users_list = [
+        ["Владимир", "Такси"],
+        ["Анна", "Дизайнер"],
+        ["Иван", "Программист"]
+    ]
+
+    message = "📋 Профили:\n\n"
+
+    for user in users_list:
+
+        message += f"👤 {user[0]} — 💼 {user[1]}\n"
 
     await update.message.reply_text(message)
 
@@ -194,6 +249,12 @@ app.add_handler(
 )
 
 app.add_handler(CommandHandler("users", users))
+
+app.add_handler(CommandHandler("count", count))
+
+app.add_handler(CommandHandler("jobs", jobs))
+
+app.add_handler(CommandHandler("profiles", profiles))
 
 app.add_handler(
     CommandHandler("time", time_command)
