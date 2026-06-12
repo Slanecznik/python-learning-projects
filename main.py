@@ -46,7 +46,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ["/users", "список пользователей"],
         ["/count", "количество пользователей"],
         ["/jobs", "список профессий"],
-        ["/profiles", "профили пользователей"]
+        ["/profiles", "профили пользователей"],
+        ["/profile", "пример словаря"]
     ]
 
     message = "📚 Команды бота:\n\n"
@@ -162,6 +163,24 @@ async def profiles(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(message)
 
+# ========= КОМАНДА /profile =========
+
+async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    user = {
+        "name": "Владимир",
+        "job": "Такси",
+        "city": "Лодзь"
+    }
+
+    message = (
+        f"👤 Имя: {user['name']}\n"
+        f"💼 Работа: {user['job']}\n"
+        f"🏙 Город: {user['city']}"
+    )
+
+    await update.message.reply_text(message)
+
 # ========= КОМАНДА /time =========
 
 async def time_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -248,13 +267,25 @@ app.add_handler(
     CommandHandler("myid", myid)
 )
 
-app.add_handler(CommandHandler("users", users))
+app.add_handler(
+    CommandHandler("users", users)
+)
 
-app.add_handler(CommandHandler("count", count))
+app.add_handler(
+    CommandHandler("count", count)
+)
 
-app.add_handler(CommandHandler("jobs", jobs))
+app.add_handler(
+    CommandHandler("jobs", jobs)
+)
 
-app.add_handler(CommandHandler("profiles", profiles))
+app.add_handler(
+    CommandHandler("profiles", profiles)
+)
+
+app.add_handler(
+    CommandHandler("profile", profile)
+)
 
 app.add_handler(
     CommandHandler("time", time_command)
