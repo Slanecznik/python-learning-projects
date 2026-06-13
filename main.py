@@ -47,7 +47,9 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ["/count", "количество пользователей"],
         ["/jobs", "список профессий"],
         ["/profiles", "профили пользователей"],
-        ["/profile", "пример словаря"]
+        ["/profile", "пример словаря"],
+        ["/whoami", "мои данные Telegram"],
+        ["/find", "поиск пользователя"]
     ]
 
     message = "📚 Команды бота:\n\n"
@@ -148,18 +150,32 @@ async def jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ========= КОМАНДА /profiles =========
 
 async def profiles(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     users_list = [
-        ["Владимир", "Такси"],
-        ["Анна", "Дизайнер"],
-        ["Иван", "Программист"]
+        {
+            "name": "Владимир",
+            "job": "Такси",
+            "city": "Лодзь"
+        },
+        {
+            "name": "Анна",
+            "job": "Дизайнер",
+            "city": "Варшава"
+        },
+        {
+            "name": "Иван",
+            "job": "Программист",
+            "city": "Краков"
+        }
     ]
 
     message = "📋 Профили:\n\n"
 
     for user in users_list:
-
-        message += f"👤 {user[0]} — 💼 {user[1]}\n"
+        message += (
+            f"👤 {user['name']}\n"
+            f"💼 {user['job']}\n"
+            f"🏙 {user['city']}\n\n"
+        )
 
     await update.message.reply_text(message)
 
@@ -180,6 +196,69 @@ async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     await update.message.reply_text(message)
+
+# ========= КОМАНДА /whoami =========
+
+async def whoami(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    user = {
+        "name": update.effective_user.first_name,
+        "username": update.effective_user.username,
+        "id": update.effective_user.id
+    }
+
+    message = (
+        f"👤 Имя: {user['name']}\n"
+        f"📛 Username: @{user['username']}\n"
+        f"🆔 ID: {user['id']}"
+    )
+
+    await update.message.reply_text(message)
+
+# ========= КОМАНДА /find =========
+
+async def find(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    users_list = [
+        {
+            "name": "Владимир",
+            "job": "Такси",
+            "city": "Лодзь"
+        },
+        {
+            "name": "Анна",
+            "job": "Дизайнер",
+            "city": "Варшава"
+        },
+        {
+            "name": "Иван",
+            "job": "Программист",
+            "city": "Краков"
+        }
+    ]
+
+    found_user = None
+
+    for user in users_list:
+
+        if user["name"] == "Владимир":
+
+            found_user = user
+
+    if found_user:
+
+        await update.message.reply_text(
+            f"Найден:\n"
+            f"👤 {found_user['name']}\n"
+            f"💼 {found_user['job']}\n"
+            f"🏙 {found_user['city']}"
+        )
+
+    else:
+
+        await update.message.reply_text(
+            "Пользователь не найден"
+        )
 
 # ========= КОМАНДА /time =========
 
@@ -285,6 +364,12 @@ app.add_handler(
 
 app.add_handler(
     CommandHandler("profile", profile)
+)
+
+app.add_handler(CommandHandler("whoami", whoami))
+
+app.add_handler(
+    CommandHandler("find", find)
 )
 
 app.add_handler(
