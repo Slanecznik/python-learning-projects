@@ -219,6 +219,7 @@ async def whoami(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def find(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    # список пользователей
     users_list = [
         {
             "name": "Владимир",
@@ -237,23 +238,40 @@ async def find(update: Update, context: ContextTypes.DEFAULT_TYPE):
         }
     ]
 
+    # пользователь ничего не написал после команды
+    if len(context.args) == 0:
+
+        await update.message.reply_text(
+            "Например: /find Анна"
+        )
+
+        return
+
+    # берём первое слово после команды
+    search_name = context.args[0]
+
+    # пока пользователь не найден
     found_user = None
 
+    # перебираем всех пользователей
     for user in users_list:
 
-        if user["name"] == "Владимир":
+        # сравниваем имя пользователя
+        if user["name"] == search_name:
 
             found_user = user
 
+    # если нашли пользователя
     if found_user:
 
         await update.message.reply_text(
-            f"Найден:\n"
+            f"Найден:\n\n"
             f"👤 {found_user['name']}\n"
             f"💼 {found_user['job']}\n"
             f"🏙 {found_user['city']}"
         )
 
+    # если не нашли
     else:
 
         await update.message.reply_text(
