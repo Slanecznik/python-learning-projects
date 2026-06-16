@@ -49,7 +49,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ["/profiles", "профили пользователей"],
         ["/profile", "пример словаря"],
         ["/whoami", "мои данные Telegram"],
-        ["/find", "поиск пользователя"]
+        ["/find", "поиск пользователя"],
+        ["/cities", "список городов"]
     ]
 
     message = "📚 Команды бота:\n\n"
@@ -278,6 +279,41 @@ async def find(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Пользователь не найден"
         )
 
+# ========= КОМАНДА /cities =========
+
+async def cities(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    # список пользователей
+    users_list = [
+        {
+            "name": "Владимир",
+            "job": "Такси",
+            "city": "Лодзь"
+        },
+        {
+            "name": "Анна",
+            "job": "Дизайнер",
+            "city": "Варшава"
+        },
+        {
+            "name": "Иван",
+            "job": "Программист",
+            "city": "Краков"
+        }
+    ]
+
+    # начинаем формировать сообщение
+    message = "🏙 Города:\n\n"
+
+    # перебираем пользователей
+    for user in users_list:
+
+        # добавляем город в сообщение
+        message += f"• {user['city']}\n"
+
+    # отправляем ответ
+    await update.message.reply_text(message)
+
 # ========= КОМАНДА /time =========
 
 async def time_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -388,6 +424,10 @@ app.add_handler(CommandHandler("whoami", whoami))
 
 app.add_handler(
     CommandHandler("find", find)
+)
+
+app.add_handler(
+    CommandHandler("cities", cities)
 )
 
 app.add_handler(
