@@ -50,7 +50,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ["/profile", "пример словаря"],
         ["/whoami", "мои данные Telegram"],
         ["/find", "поиск пользователя"],
-        ["/cities", "список городов"]
+        ["/cities", "список городов"],
+        ["/findcity", "поиск по городу"]
     ]
 
     message = "📚 Команды бота:\n\n"
@@ -314,6 +315,68 @@ async def cities(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # отправляем ответ
     await update.message.reply_text(message)
 
+# ========= КОМАНДА /findcity =========
+
+async def findcity(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    # список пользователей
+    users_list = [
+        {
+            "name": "Владимир",
+            "job": "Такси",
+            "city": "Лодзь"
+        },
+        {
+            "name": "Анна",
+            "job": "Дизайнер",
+            "city": "Варшава"
+        },
+        {
+            "name": "Иван",
+            "job": "Программист",
+            "city": "Краков"
+        }
+    ]
+
+    # если город не указан
+    if len(context.args) == 0:
+
+        await update.message.reply_text(
+            "Например: /findcity Лодзь"
+        )
+
+        return
+
+    # берём город после команды
+    search_city = context.args[0]
+
+    # пока никого не нашли
+    found_user = None
+
+    # перебираем пользователей
+    for user in users_list:
+
+        # сравниваем город
+        if user["city"] == search_city:
+
+            found_user = user
+
+    # если нашли
+    if found_user:
+
+        await update.message.reply_text(
+            f"👤 {found_user['name']}\n"
+            f"💼 {found_user['job']}\n"
+            f"🏙 {found_user['city']}"
+        )
+
+    # если не нашли
+    else:
+
+        await update.message.reply_text(
+            "Город не найден"
+        )
+
 # ========= КОМАНДА /time =========
 
 async def time_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -428,6 +491,10 @@ app.add_handler(
 
 app.add_handler(
     CommandHandler("cities", cities)
+)
+
+app.add_handler(
+    CommandHandler("findcity", findcity)
 )
 
 app.add_handler(
