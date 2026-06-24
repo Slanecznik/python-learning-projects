@@ -52,7 +52,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ["/find", "поиск пользователя"],
         ["/cities", "список городов"],
         ["/findcity", "поиск по городу"],
-        ["/stats", "статистика"]
+        ["/stats", "статистика"],
+        ["/uniquejobs", "профессии без повторов"]
     ]
 
     message = "📚 Команды бота:\n\n"
@@ -425,6 +426,51 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"🏙 Городов: {cities_count}"
     )
 
+# ========= КОМАНДА /uniquejobs =========
+
+async def uniquejobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    # список пользователей
+    users_list = [
+        {
+            "name": "Владимир",
+            "job": "Такси",
+            "city": "Лодзь"
+        },
+        {
+            "name": "Анна",
+            "job": "Такси"
+            ,
+            "city": "Варшава"
+        },
+        {
+            "name": "Иван",
+            "job": "Программист",
+            "city": "Краков"
+        }
+    ]
+
+    # создаём пустое множество
+    jobs = set()
+
+    # перебираем пользователей
+    for user in users_list:
+
+        # добавляем профессию
+        jobs.add(user["job"])
+
+    # начинаем сообщение
+    message = "💼 Профессии:\n\n"
+
+    # перебираем множество
+    for job in jobs:
+
+        # добавляем профессию в сообщение
+        message += f"• {job}\n"
+
+    # отправляем ответ
+    await update.message.reply_text(message)
+
 # ========= КОМАНДА /time =========
 
 async def time_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -547,6 +593,10 @@ app.add_handler(
 
 app.add_handler(
     CommandHandler("stats", stats)
+)
+
+app.add_handler(
+    CommandHandler("uniquejobs", uniquejobs)
 )
 
 app.add_handler(
