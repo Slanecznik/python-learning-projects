@@ -53,7 +53,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ["/cities", "список городов"],
         ["/findcity", "поиск по городу"],
         ["/stats", "статистика"],
-        ["/uniquejobs", "профессии без повторов"]
+        ["/uniquejobs", "профессии без повторов"],
+        ["/hasjob", "проверить профессию"]
     ]
 
     message = "📚 Команды бота:\n\n"
@@ -471,6 +472,42 @@ async def uniquejobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # отправляем ответ
     await update.message.reply_text(message)
 
+# ========= КОМАНДА /hasjob =========
+
+async def hasjob(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    # множество профессий
+    jobs = {
+        "Такси",
+        "Программист"
+    }
+
+    # если пользователь ничего не написал
+    if len(context.args) == 0:
+
+        await update.message.reply_text(
+            "Например: /hasjob Такси"
+        )
+
+        return
+
+    # получаем профессию после команды
+    search_job = context.args[0]
+
+    # проверяем наличие профессии
+    if search_job in jobs:
+
+        await update.message.reply_text(
+            "✅ Профессия найдена"
+        )
+
+    else:
+
+        await update.message.reply_text(
+            "❌ Такой профессии нет"
+        )
+
+
 # ========= КОМАНДА /time =========
 
 async def time_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -597,6 +634,10 @@ app.add_handler(
 
 app.add_handler(
     CommandHandler("uniquejobs", uniquejobs)
+)
+
+app.add_handler(
+    CommandHandler("hasjob", hasjob)
 )
 
 app.add_handler(
