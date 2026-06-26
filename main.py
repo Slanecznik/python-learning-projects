@@ -54,7 +54,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ["/findcity", "поиск по городу"],
         ["/stats", "статистика"],
         ["/uniquejobs", "профессии без повторов"],
-        ["/hasjob", "проверить профессию"]
+        ["/hasjob", "проверить профессию"],
+        ["/job", "показать профессию"]
     ]
 
     message = "📚 Команды бота:\n\n"
@@ -282,6 +283,59 @@ async def find(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             "Пользователь не найден"
         )
+
+# ========= КОМАНДА /job =========
+
+async def job(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    # список пользователей
+    users_list = [
+        {
+            "name": "Владимир",
+            "job": "Такси",
+            "city": "Лодзь"
+        },
+        {
+            "name": "Анна",
+            "job": "Дизайнер",
+            "city": "Варшава"
+        },
+        {
+            "name": "Иван",
+            "job": "Программист",
+            "city": "Краков"
+        }
+    ]
+
+    # если имя не указано
+    if len(context.args) == 0:
+
+        await update.message.reply_text(
+            "Например: /job Владимир"
+        )
+
+        return
+
+    # получаем имя после команды
+    search_name = context.args[0]
+
+    # перебираем пользователей
+    for user in users_list:
+
+        # если нашли нужного пользователя
+        if user["name"] == search_name:
+
+            # отправляем его профессию
+            await update.message.reply_text(
+                f"💼 Профессия: {user['job']}"
+            )
+
+            return
+
+    # если пользователь не найден
+    await update.message.reply_text(
+        "❌ Пользователь не найден"
+    )
 
 # ========= КОМАНДА /cities =========
 
@@ -618,6 +672,10 @@ app.add_handler(CommandHandler("whoami", whoami))
 
 app.add_handler(
     CommandHandler("find", find)
+)
+
+app.add_handler(
+    CommandHandler("job", job)
 )
 
 app.add_handler(
