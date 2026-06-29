@@ -20,6 +20,28 @@ load_dotenv()
 
 TOKEN = os.getenv("BOT_TOKEN")
 
+# ========= БАЗА ПОЛЬЗОВАТЕЛЕЙ =========
+
+# Один общий список пользователей.
+# Все команды будут брать данные отсюда.
+users_list = [
+    {
+        "name": "Владимир",
+        "job": "Такси",
+        "city": "Лодзь"
+    },
+    {
+        "name": "Анна",
+        "job": "Такси",
+        "city": "Варшава"
+    },
+    {
+        "name": "Иван",
+        "job": "Программист",
+        "city": "Краков"
+    }
+]
+
 # ========= КОМАНДА /start =========
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -105,29 +127,17 @@ async def myid(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    users_list = [
-        ["Владимир", "Такси"],
-        ["Анна", "Дизайнер"],
-        ["Иван", "Программист"]
-    ]
-
     message = "👥 Пользователи:\n\n"
 
     for user in users_list:
-
-        message += f"{user[0]} — {user[1]}\n"
+        # добавляем имя и профессию
+        message += f"{user['name']} — {user['job']}\n"
 
     await update.message.reply_text(message)
 
 # ========= КОМАНДА /count =========
 
 async def count(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    users_list = [
-        ["Владимир", "Такси"],
-        ["Анна", "Дизайнер"],
-        ["Иван", "Программист"]
-    ]
 
     users_count = len(users_list)
 
@@ -139,40 +149,17 @@ async def count(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    users_list = [
-        ["Владимир", "Такси"],
-        ["Анна", "Дизайнер"],
-        ["Иван", "Программист"]
-    ]
-
     message = "💼 Профессии:\n\n"
 
     for user in users_list:
-
-        message += f"• {user[1]}\n"
+        # добавляем профессию
+        message += f"• {user['job']}\n"
 
     await update.message.reply_text(message)
 
 # ========= КОМАНДА /profiles =========
 
 async def profiles(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    users_list = [
-        {
-            "name": "Владимир",
-            "job": "Такси",
-            "city": "Лодзь"
-        },
-        {
-            "name": "Анна",
-            "job": "Дизайнер",
-            "city": "Варшава"
-        },
-        {
-            "name": "Иван",
-            "job": "Программист",
-            "city": "Краков"
-        }
-    ]
 
     message = "📋 Профили:\n\n"
 
@@ -189,11 +176,7 @@ async def profiles(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    user = {
-        "name": "Владимир",
-        "job": "Такси",
-        "city": "Лодзь"
-    }
+    user = users_list[0]
 
     message = (
         f"👤 Имя: {user['name']}\n"
@@ -224,25 +207,6 @@ async def whoami(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ========= КОМАНДА /find =========
 
 async def find(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    # список пользователей
-    users_list = [
-        {
-            "name": "Владимир",
-            "job": "Такси",
-            "city": "Лодзь"
-        },
-        {
-            "name": "Анна",
-            "job": "Дизайнер",
-            "city": "Варшава"
-        },
-        {
-            "name": "Иван",
-            "job": "Программист",
-            "city": "Краков"
-        }
-    ]
 
     # пользователь ничего не написал после команды
     if len(context.args) == 0:
@@ -288,25 +252,6 @@ async def find(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def job(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # список пользователей
-    users_list = [
-        {
-            "name": "Владимир",
-            "job": "Такси",
-            "city": "Лодзь"
-        },
-        {
-            "name": "Анна",
-            "job": "Дизайнер",
-            "city": "Варшава"
-        },
-        {
-            "name": "Иван",
-            "job": "Программист",
-            "city": "Краков"
-        }
-    ]
-
     # если имя не указано
     if len(context.args) == 0:
 
@@ -341,25 +286,6 @@ async def job(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def cities(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # список пользователей
-    users_list = [
-        {
-            "name": "Владимир",
-            "job": "Такси",
-            "city": "Лодзь"
-        },
-        {
-            "name": "Анна",
-            "job": "Дизайнер",
-            "city": "Варшава"
-        },
-        {
-            "name": "Иван",
-            "job": "Программист",
-            "city": "Краков"
-        }
-    ]
-
     # начинаем формировать сообщение
     message = "🏙 Города:\n\n"
 
@@ -375,25 +301,6 @@ async def cities(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ========= КОМАНДА /findcity =========
 
 async def findcity(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    # список пользователей
-    users_list = [
-        {
-            "name": "Владимир",
-            "job": "Такси",
-            "city": "Лодзь"
-        },
-        {
-            "name": "Анна",
-            "job": "Дизайнер",
-            "city": "Варшава"
-        },
-        {
-            "name": "Иван",
-            "job": "Программист",
-            "city": "Краков"
-        }
-    ]
 
     # если город не указан
     if len(context.args) == 0:
@@ -438,25 +345,6 @@ async def findcity(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # список пользователей
-    users_list = [
-        {
-            "name": "Владимир",
-            "job": "Такси",
-            "city": "Лодзь"
-        },
-        {
-            "name": "Анна",
-            "job": "Дизайнер",
-            "city": "Варшава"
-        },
-        {
-            "name": "Иван",
-            "job": "Программист",
-            "city": "Краков"
-        }
-    ]
-
     # считаем пользователей
     users_count = len(users_list)
 
@@ -485,26 +373,6 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def uniquejobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # список пользователей
-    users_list = [
-        {
-            "name": "Владимир",
-            "job": "Такси",
-            "city": "Лодзь"
-        },
-        {
-            "name": "Анна",
-            "job": "Такси"
-            ,
-            "city": "Варшава"
-        },
-        {
-            "name": "Иван",
-            "job": "Программист",
-            "city": "Краков"
-        }
-    ]
-
     # создаём пустое множество
     jobs = set()
 
@@ -529,12 +397,12 @@ async def uniquejobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ========= КОМАНДА /hasjob =========
 
 async def hasjob(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # создаём пустое множество
+    jobs = set()
 
-    # множество профессий
-    jobs = {
-        "Такси",
-        "Программист"
-    }
+    # собираем все профессии
+    for user in users_list:
+        jobs.add(user["job"])
 
     # если пользователь ничего не написал
     if len(context.args) == 0:
