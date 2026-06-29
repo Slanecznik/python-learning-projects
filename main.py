@@ -20,27 +20,23 @@ load_dotenv()
 
 TOKEN = os.getenv("BOT_TOKEN")
 
-# ========= БАЗА ПОЛЬЗОВАТЕЛЕЙ =========
+from users import users_list
 
-# Один общий список пользователей.
-# Все команды будут брать данные отсюда.
-users_list = [
-    {
-        "name": "Владимир",
-        "job": "Такси",
-        "city": "Лодзь"
-    },
-    {
-        "name": "Анна",
-        "job": "Такси",
-        "city": "Варшава"
-    },
-    {
-        "name": "Иван",
-        "job": "Программист",
-        "city": "Краков"
-    }
-]
+# ========= ПОИСК ПОЛЬЗОВАТЕЛЯ =========
+
+def find_user(name):
+
+    # перебираем пользователей
+    for user in users_list:
+
+        # если имя совпало
+        if user["name"] == name:
+
+            # возвращаем найденного пользователя
+            return user
+
+    # если никого не нашли
+    return None
 
 # ========= КОМАНДА /start =========
 
@@ -265,17 +261,22 @@ async def job(update: Update, context: ContextTypes.DEFAULT_TYPE):
     search_name = context.args[0]
 
     # перебираем пользователей
-    for user in users_list:
+    # ищем пользователя
+    user = find_user(search_name)
 
-        # если нашли нужного пользователя
-        if user["name"] == search_name:
+    # если нашли
+    if user:
 
-            # отправляем его профессию
-            await update.message.reply_text(
-                f"💼 Профессия: {user['job']}"
-            )
+        await update.message.reply_text(
+            f"💼 Профессия: {user['job']}"
+        )
 
-            return
+    # если не нашли
+    else:
+
+        await update.message.reply_text(
+            "❌ Пользователь не найден"
+        )
 
     # если пользователь не найден
     await update.message.reply_text(
