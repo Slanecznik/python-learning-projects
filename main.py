@@ -38,6 +38,38 @@ def find_user(name):
     # если никого не нашли
     return None
 
+# ========= ПОИСК ПО ГОРОДУ =========
+
+def find_city(city):
+
+    # перебираем пользователей
+    for user in users_list:
+
+        # если нашли нужный город
+        if user["city"] == city:
+
+            # возвращаем пользователя
+            return user
+
+    # если ничего не нашли
+    return None
+
+# ========= ПОИСК ПРОФЕССИИ =========
+
+def find_job(job):
+
+    # перебираем пользователей
+    for user in users_list:
+
+        # если профессия совпала
+        if user["job"] == job:
+
+            # возвращаем пользователя
+            return user
+
+    # если не нашли
+    return None
+
 # ========= КОМАНДА /start =========
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -315,16 +347,8 @@ async def findcity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # берём город после команды
     search_city = context.args[0]
 
-    # пока никого не нашли
-    found_user = None
-
-    # перебираем пользователей
-    for user in users_list:
-
-        # сравниваем город
-        if user["city"] == search_city:
-
-            found_user = user
+    # ищем пользователя по городу
+    found_user = find_city(search_city)
 
     # если нашли
     if found_user:
@@ -398,12 +422,6 @@ async def uniquejobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ========= КОМАНДА /hasjob =========
 
 async def hasjob(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # создаём пустое множество
-    jobs = set()
-
-    # собираем все профессии
-    for user in users_list:
-        jobs.add(user["job"])
 
     # если пользователь ничего не написал
     if len(context.args) == 0:
@@ -414,22 +432,25 @@ async def hasjob(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         return
 
-    # получаем профессию после команды
+    # получаем профессию
     search_job = context.args[0]
 
-    # проверяем наличие профессии
-    if search_job in jobs:
+    # ищем профессию
+    user = find_job(search_job)
+
+    # если нашли
+    if user:
 
         await update.message.reply_text(
             "✅ Профессия найдена"
         )
 
+    # если не нашли
     else:
 
         await update.message.reply_text(
             "❌ Такой профессии нет"
         )
-
 
 # ========= КОМАНДА /time =========
 
