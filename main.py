@@ -30,7 +30,7 @@ def find_user(name):
     for user in users_list:
 
         # если имя совпало
-        if user["name"] == name:
+        if user["name"].lower() == name.lower():
 
             # возвращаем найденного пользователя
             return user
@@ -236,30 +236,24 @@ async def whoami(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def find(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    if not context.args:
+    if len(context.args) == 0:
 
         await update.message.reply_text(
-            "Использование:\n/find Имя"
+            "Например:\n/find Владимир"
         )
+
         return
 
     search_name = context.args[0]
 
-    found_user = None
+    user = find_user(search_name)
 
-    for user in users_list:
-
-        if user["name"].lower() == search_name.lower():
-
-            found_user = user
-            break
-
-    if found_user:
+    if user:
 
         await update.message.reply_text(
-            f"👤 {found_user['name']}\n"
-            f"💼 {found_user['job']}\n"
-            f"🏙 {found_user['city']}"
+            f"👤 {user['name']}\n"
+            f"💼 {user['job']}\n"
+            f"🏙 {user['city']}"
         )
 
     else:
@@ -301,11 +295,6 @@ async def job(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             "❌ Пользователь не найден"
         )
-
-    # если пользователь не найден
-    await update.message.reply_text(
-        "❌ Пользователь не найден"
-    )
 
 # ========= КОМАНДА /cities =========
 
