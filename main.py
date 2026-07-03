@@ -14,6 +14,8 @@ from telegram.ext import (
     filters,
 )
 
+from commands import about
+
 # ========= ЗАГРУЖАЕМ .ENV =========
 
 load_dotenv()
@@ -22,53 +24,11 @@ TOKEN = os.getenv("BOT_TOKEN")
 
 from users import users_list
 
-# ========= ПОИСК ПОЛЬЗОВАТЕЛЯ =========
-
-def find_user(name):
-
-    # перебираем пользователей
-    for user in users_list:
-
-        # если имя совпало
-        if user["name"].lower() == name.lower():
-
-            # возвращаем найденного пользователя
-            return user
-
-    # если никого не нашли
-    return None
-
-# ========= ПОИСК ПО ГОРОДУ =========
-
-def find_city(city):
-
-    # перебираем пользователей
-    for user in users_list:
-
-        # если нашли нужный город
-        if user["city"] == city:
-
-            # возвращаем пользователя
-            return user
-
-    # если ничего не нашли
-    return None
-
-# ========= ПОИСК ПРОФЕССИИ =========
-
-def find_job(job):
-
-    # перебираем пользователей
-    for user in users_list:
-
-        # если профессия совпала
-        if user["job"] == job:
-
-            # возвращаем пользователя
-            return user
-
-    # если не нашли
-    return None
+from search import (
+    find_user,
+    find_city,
+    find_job,
+)
 
 # ========= КОМАНДА /start =========
 
@@ -115,15 +75,6 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         message += f"{command[0]} - {command[1]}\n"
 
     await update.message.reply_text(message)
-
-# ========= КОМАНДА /about =========
-
-async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    await update.message.reply_text(
-        "🤖 Это мой первый backend-проект.\n"
-        "Бот написан на Python."
-    )
 
 # ========= КОМАНДА /me =========
 
