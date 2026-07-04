@@ -65,7 +65,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ["/stats", "статистика"],
         ["/uniquejobs", "профессии без повторов"],
         ["/hasjob", "проверить профессию"],
-        ["/job", "показать профессию"]
+        ["/job", "показать профессию"],
+        ["/jobstats", "статистика профессий"]
     ]
 
     message = "📚 Команды бота:\n\n"
@@ -351,6 +352,32 @@ async def uniquejobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # отправляем ответ
     await update.message.reply_text(message)
 
+# ========= КОМАНДА /jobstats =========
+
+async def jobstats(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    jobs = {}
+
+    for user in users_list:
+
+        job = user["job"]
+
+        if job in jobs:
+
+            jobs[job] += 1
+
+        else:
+
+            jobs[job] = 1
+
+    message = "📊 Статистика профессий\n\n"
+
+    for job in jobs:
+
+        message += f"{job}: {jobs[job]}\n"
+
+    await update.message.reply_text(message)
+
 # ========= КОМАНДА /hasjob =========
 
 async def hasjob(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -514,6 +541,10 @@ app.add_handler(
 
 app.add_handler(
     CommandHandler("uniquejobs", uniquejobs)
+)
+
+app.add_handler(
+    CommandHandler("jobstats", jobstats)
 )
 
 app.add_handler(
