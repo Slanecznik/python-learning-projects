@@ -13,6 +13,25 @@ def find_by(field, value):
 
     return None
 
+# ========= УНИВЕРСАЛЬНЫЙ СЧЁТЧИК =========
+
+def count_by(field):
+
+    counter = {}
+
+    for user in users_list:
+
+        value = user[field]
+
+        if value in counter:
+
+            counter[value] += 1
+
+        else:
+
+            counter[value] = 1
+
+    return counter
 
 # ========= ПОИСК ПО ИМЕНИ =========
 

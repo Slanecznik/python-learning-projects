@@ -28,6 +28,7 @@ from search import (
     find_user,
     find_city,
     find_job,
+    count_by,
 )
 
 # ========= КОМАНДА /start =========
@@ -353,23 +354,12 @@ async def uniquejobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # отправляем ответ
     await update.message.reply_text(message)
 
+
 # ========= КОМАНДА /jobstats =========
 
 async def jobstats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    jobs = {}
-
-    for user in users_list:
-
-        job = user["job"]
-
-        if job in jobs:
-
-            jobs[job] += 1
-
-        else:
-
-            jobs[job] = 1
+    jobs = count_by("job")
 
     message = "📊 Статистика профессий\n\n"
 
@@ -383,19 +373,7 @@ async def jobstats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def citystats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    cities = {}
-
-    for user in users_list:
-
-        city = user["city"]
-
-        if city in cities:
-
-            cities[city] += 1
-
-        else:
-
-            cities[city] = 1
+    cities = count_by("city")
 
     message = "📊 Статистика городов\n\n"
 
