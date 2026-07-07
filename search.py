@@ -49,3 +49,15 @@ def find_city(city):
 
 def find_job(job):
     return find_by("job", job)
+
+# ========= СОЗДАНИЕ СООБЩЕНИЯ =========
+
+def make_stats_message(title, data):
+
+    message = f"{title}\n\n"
+
+    for key in data:
+
+        message += f"{key}: {data[key]}\n"
+
+    return message
