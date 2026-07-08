@@ -69,7 +69,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ["/hasjob", "проверить профессию"],
         ["/job", "показать профессию"],
         ["/jobstats", "статистика профессий"],
-        ["/citystats", "статистика городов"]
+        ["/citystats", "статистика городов"],
+        ["/adduser", "добавить пользователя"],
     ]
 
     message = "📚 Команды бота:\n\n"
@@ -414,6 +415,38 @@ async def hasjob(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "❌ Такой профессии нет"
         )
 
+# ========= КОМАНДА /adduser =========
+
+async def adduser(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    # проверяем количество аргументов
+    if len(context.args) != 3:
+
+        await update.message.reply_text(
+            "Например:\n/adduser Сергей Таксист Познань"
+        )
+
+        return
+
+    # получаем данные
+    name = context.args[0]
+    job = context.args[1]
+    city = context.args[2]
+
+    # создаём нового пользователя
+    new_user = {
+        "name": name,
+        "job": job,
+        "city": city
+    }
+
+    # добавляем в список
+    users_list.append(new_user)
+
+    await update.message.reply_text(
+        f"✅ Пользователь {name} добавлен"
+    )
+
 # ========= КОМАНДА /time =========
 
 async def time_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -556,6 +589,10 @@ app.add_handler(
 
 app.add_handler(
     CommandHandler("hasjob", hasjob)
+)
+
+app.add_handler(
+    CommandHandler("adduser", adduser)
 )
 
 app.add_handler(
