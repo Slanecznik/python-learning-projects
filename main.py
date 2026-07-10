@@ -72,6 +72,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ["/citystats", "статистика городов"],
         ["/adduser", "добавить пользователя"],
         ["/deleteuser", "удалить пользователя"],
+        ["/edituser", "изменить пользователя"],
     ]
 
     message = "📚 Команды бота:\n\n"
@@ -478,6 +479,39 @@ async def deleteuser(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "❌ Пользователь не найден"
         )
 
+# ========= КОМАНДА /edituser =========
+
+async def edituser(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    if len(context.args) != 3:
+
+        await update.message.reply_text(
+            "Например:\n/edituser Иван Python Минск"
+        )
+
+        return
+
+    search_name = context.args[0]
+    new_job = context.args[1]
+    new_city = context.args[2]
+
+    user = find_user(search_name)
+
+    if user:
+
+        user["job"] = new_job
+        user["city"] = new_city
+
+        await update.message.reply_text(
+            f"✅ Пользователь {search_name} обновлён"
+        )
+
+    else:
+
+        await update.message.reply_text(
+            "❌ Пользователь не найден"
+        )
+
 # ========= КОМАНДА /time =========
 
 async def time_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -628,6 +662,10 @@ app.add_handler(
 
 app.add_handler(
     CommandHandler("deleteuser", deleteuser)
+)
+
+app.add_handler(
+    CommandHandler("edituser", edituser)
 )
 
 app.add_handler(
