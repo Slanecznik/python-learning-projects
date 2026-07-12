@@ -22,7 +22,9 @@ load_dotenv()
 
 TOKEN = os.getenv("BOT_TOKEN")
 
-from users import users_list
+from database import load_users
+
+users_list = load_users()
 
 from search import (
     find_user,
