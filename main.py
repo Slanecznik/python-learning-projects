@@ -22,7 +22,10 @@ load_dotenv()
 
 TOKEN = os.getenv("BOT_TOKEN")
 
-from database import load_users
+from database import (
+    load_users,
+    save_users,
+)
 
 users_list = load_users()
 
@@ -446,6 +449,8 @@ async def adduser(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # добавляем в список
     users_list.append(new_user)
+
+    save_users(users_list)
 
     await update.message.reply_text(
         f"✅ Пользователь {name} добавлен"
