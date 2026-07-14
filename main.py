@@ -476,6 +476,8 @@ async def deleteuser(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         users_list.remove(user)
 
+        save_users(users_list)
+
         await update.message.reply_text(
             f"✅ Пользователь {search_name} удалён"
         )
