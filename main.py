@@ -511,6 +511,8 @@ async def edituser(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user["job"] = new_job
         user["city"] = new_city
 
+        save_users(users_list)
+
         await update.message.reply_text(
             f"✅ Пользователь {search_name} обновлён"
         )
