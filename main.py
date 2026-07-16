@@ -37,17 +37,11 @@ from search import (
     make_stats_message,
 )
 
-# ========= КОМАНДА /start =========
-
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    name = update.effective_user.first_name
-
-    await update.message.reply_text(
-        f"Привет, {name}! 👋\n\n"
-        "Я твой Telegram-бот.\n"
-        "Напиши /help"
-    )
+from handlers import (
+    start,
+    me,
+    myid,
+)
 
 # ========= КОМАНДА /help =========
 
@@ -88,31 +82,6 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(message)
 
-# ========= КОМАНДА /me =========
-
-async def me(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    name = update.effective_user.first_name
-    username = update.effective_user.username
-    user_id = update.effective_user.id
-
-    message = (
-        f"👤 Имя: {name}\n"
-        f"📛 Username: @{username}\n"
-        f"🆔 ID: {user_id}"
-    )
-
-    await update.message.reply_text(message)
-
-# ========= КОМАНДА /myid =========
-
-async def myid(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    user_id = update.effective_user.id
-
-    await update.message.reply_text(
-        f"Твой Telegram ID: {user_id}"
-    )
 
 # ========= КОМАНДА /users =========
 
