@@ -1,6 +1,6 @@
 from telegram import Update
 from telegram.ext import ContextTypes
-
+from users import users_list
 
 # Здесь находятся команды,
 # связанные с пользователем.
@@ -44,7 +44,6 @@ async def me(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ========= КОМАНДА /myid =========
 
 async def myid(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     # Получаем ID пользователя
     user_id = update.effective_user.id
 
@@ -52,3 +51,72 @@ async def myid(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"Твой Telegram ID: {user_id}"
     )
+
+
+# ========= КОМАНДА /users =========
+
+# Показывает список пользователей
+async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # Заголовок
+    message = "👥 Пользователи:\n\n"
+
+    # Перебираем список
+    for user in users_list:
+        # Добавляем пользователя
+        message += f"{user['name']} — {user['job']}\n"
+
+    # Отправляем сообщение
+    await update.message.reply_text(message)
+
+# ========= КОМАНДА /count =========
+
+async def count(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    users_count = len(users_list)
+
+    await update.message.reply_text(
+        f"Всего пользователей: {users_count}"
+    )
+
+# ========= КОМАНДА /jobs =========
+
+async def jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    message = "💼 Профессии:\n\n"
+
+    for user in users_list:
+
+        message += f"• {user['job']}\n"
+
+    await update.message.reply_text(message)
+
+# ========= КОМАНДА /profiles =========
+
+async def profiles(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    message = "📋 Профили:\n\n"
+
+    for user in users_list:
+
+        message += (
+            f"👤 {user['name']}\n"
+            f"💼 {user['job']}\n"
+            f"🏙 {user['city']}\n\n"
+        )
+
+    await update.message.reply_text(message)
+
+# ========= КОМАНДА /profile =========
+
+async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    user = users_list[0]
+
+    message = (
+        f"👤 Имя: {user['name']}\n"
+        f"💼 Работа: {user['job']}\n"
+        f"🏙 Город: {user['city']}"
+    )
+
+    await update.message.reply_text(message)
+

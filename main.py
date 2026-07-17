@@ -41,6 +41,11 @@ from handlers import (
     start,
     me,
     myid,
+    users,
+    count,
+    jobs,
+    profiles,
+    profile,
 )
 
 # ========= КОМАНДА /help =========
@@ -82,69 +87,6 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(message)
 
-
-# ========= КОМАНДА /users =========
-
-async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    message = "👥 Пользователи:\n\n"
-
-    for user in users_list:
-        # добавляем имя и профессию
-        message += f"{user['name']} — {user['job']}\n"
-
-    await update.message.reply_text(message)
-
-# ========= КОМАНДА /count =========
-
-async def count(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    users_count = len(users_list)
-
-    await update.message.reply_text(
-        f"Всего пользователей: {users_count}"
-    )
-
-# ========= КОМАНДА /jobs =========
-
-async def jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    message = "💼 Профессии:\n\n"
-
-    for user in users_list:
-        # добавляем профессию
-        message += f"• {user['job']}\n"
-
-    await update.message.reply_text(message)
-
-# ========= КОМАНДА /profiles =========
-
-async def profiles(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    message = "📋 Профили:\n\n"
-
-    for user in users_list:
-        message += (
-            f"👤 {user['name']}\n"
-            f"💼 {user['job']}\n"
-            f"🏙 {user['city']}\n\n"
-        )
-
-    await update.message.reply_text(message)
-
-# ========= КОМАНДА /profile =========
-
-async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    user = users_list[0]
-
-    message = (
-        f"👤 Имя: {user['name']}\n"
-        f"💼 Работа: {user['job']}\n"
-        f"🏙 Город: {user['city']}"
-    )
-
-    await update.message.reply_text(message)
 
 # ========= КОМАНДА /whoami =========
 
