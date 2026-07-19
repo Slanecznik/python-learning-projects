@@ -1,3 +1,5 @@
+from commands import register_handlers
+
 # ========= ИМПОРТЫ =========
 
 from datetime import datetime
@@ -5,7 +7,7 @@ from dotenv import load_dotenv
 import os
 
 from telegram import Update
-from handlers import register_handlers
+
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -37,16 +39,8 @@ from search import (
     make_stats_message,
 )
 
-from handlers import (
-    start,
-    me,
-    myid,
-    users,
-    count,
-    jobs,
-    profiles,
-    profile,
-)
+from commands import register_handlers
+from commands import about
 
 # ========= КОМАНДА /help =========
 
@@ -500,74 +494,7 @@ app = Application.builder().token(TOKEN).build()
 
 # ========= HANDLERS =========
 
-app.add_handler(
-    CommandHandler("help", help_command)
-)
 
-app.add_handler(
-    CommandHandler("about", about)
-)
-
-app.add_handler(CommandHandler("whoami", whoami))
-
-app.add_handler(
-    CommandHandler("find", find)
-)
-
-app.add_handler(
-    CommandHandler("job", job)
-)
-
-app.add_handler(
-    CommandHandler("cities", cities)
-)
-
-app.add_handler(
-    CommandHandler("findcity", findcity)
-)
-
-app.add_handler(
-    CommandHandler("stats", stats)
-)
-
-app.add_handler(
-    CommandHandler("uniquejobs", uniquejobs)
-)
-
-app.add_handler(
-    CommandHandler("jobstats", jobstats)
-)
-
-app.add_handler(
-    CommandHandler("citystats", citystats)
-)
-
-app.add_handler(
-    CommandHandler("hasjob", hasjob)
-)
-
-app.add_handler(
-    CommandHandler("adduser", adduser)
-)
-
-app.add_handler(
-    CommandHandler("deleteuser", deleteuser)
-)
-
-app.add_handler(
-    CommandHandler("edituser", edituser)
-)
-
-app.add_handler(
-    CommandHandler("time", time_command)
-)
-
-app.add_handler(
-    MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        text_message
-    )
-)
 
 # ========= ЗАПУСК БОТА =========
 
