@@ -1,4 +1,6 @@
-from users_backup import users_list
+from database import load_users
+
+users_list = load_users()
 
 
 # ========= УНИВЕРСАЛЬНЫЙ ПОИСК =========

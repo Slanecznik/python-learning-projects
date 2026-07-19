@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 
 from telegram import Update
-
+from handlers import register_handlers
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -501,43 +501,11 @@ app = Application.builder().token(TOKEN).build()
 # ========= HANDLERS =========
 
 app.add_handler(
-    CommandHandler("start", start)
-)
-
-app.add_handler(
     CommandHandler("help", help_command)
 )
 
 app.add_handler(
     CommandHandler("about", about)
-)
-
-app.add_handler(
-    CommandHandler("me", me)
-)
-
-app.add_handler(
-    CommandHandler("myid", myid)
-)
-
-app.add_handler(
-    CommandHandler("users", users)
-)
-
-app.add_handler(
-    CommandHandler("count", count)
-)
-
-app.add_handler(
-    CommandHandler("jobs", jobs)
-)
-
-app.add_handler(
-    CommandHandler("profiles", profiles)
-)
-
-app.add_handler(
-    CommandHandler("profile", profile)
 )
 
 app.add_handler(CommandHandler("whoami", whoami))

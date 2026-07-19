@@ -1,6 +1,8 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 from users import users_list
+from telegram.ext import CommandHandler
+
 
 # Здесь находятся команды,
 # связанные с пользователем.
@@ -9,7 +11,6 @@ from users import users_list
 # ========= КОМАНДА /start =========
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     # Получаем имя пользователя
     name = update.effective_user.first_name
 
@@ -24,7 +25,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ========= КОМАНДА /me =========
 
 async def me(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     # Получаем данные Telegram
     name = update.effective_user.first_name
     username = update.effective_user.username
@@ -68,36 +68,34 @@ async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Отправляем сообщение
     await update.message.reply_text(message)
 
+
 # ========= КОМАНДА /count =========
 
 async def count(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     users_count = len(users_list)
 
     await update.message.reply_text(
         f"Всего пользователей: {users_count}"
     )
 
+
 # ========= КОМАНДА /jobs =========
 
 async def jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     message = "💼 Профессии:\n\n"
 
     for user in users_list:
-
         message += f"• {user['job']}\n"
 
     await update.message.reply_text(message)
 
+
 # ========= КОМАНДА /profiles =========
 
 async def profiles(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     message = "📋 Профили:\n\n"
 
     for user in users_list:
-
         message += (
             f"👤 {user['name']}\n"
             f"💼 {user['job']}\n"
@@ -106,10 +104,10 @@ async def profiles(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(message)
 
+
 # ========= КОМАНДА /profile =========
 
 async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     user = users_list[0]
 
     message = (
@@ -120,3 +118,13 @@ async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(message)
 
+
+def register_handlers(app):
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("me", me))
+    app.add_handler(CommandHandler("myid", myid))
+    app.add_handler(CommandHandler("users", users))
+    app.add_handler(CommandHandler("count", count))
+    app.add_handler(CommandHandler("jobs", jobs))
+    app.add_handler(CommandHandler("profiles", profiles))
+    app.add_handler(CommandHandler("profile", profile))

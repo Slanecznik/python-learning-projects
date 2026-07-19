@@ -10,3 +10,4 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🤖 Это мой первый backend-проект.\n"
         "Бот написан на Python."
     )
+
