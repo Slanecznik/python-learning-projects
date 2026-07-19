@@ -9,8 +9,6 @@ def load_users():
 
     return users
 
-# ========= СОХРАНЕНИЕ ПОЛЬЗОВАТЕЛЕЙ =========
-
 def save_users(users):
 
     with open("users.json", "w", encoding="utf-8") as file:
