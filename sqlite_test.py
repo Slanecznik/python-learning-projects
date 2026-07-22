@@ -8,11 +8,23 @@ cursor = connection.cursor()
 
 # Создаём таблицу users
 
-
 cursor.execute("""
 INSERT INTO users (name, job, city)
 VALUES ('Владимир', 'Таксист', 'Лодзь')
 """)
+
+# Получаем всех пользователей
+cursor.execute("""
+SELECT * FROM users
+""")
+
+# Забираем все строки
+users = cursor.fetchall()
+
+# Выводим каждую запись
+for user in users:
+    print(user)
+
 
 # Сохраняем изменения
 connection.commit()
