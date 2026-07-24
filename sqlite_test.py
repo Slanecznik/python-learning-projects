@@ -21,7 +21,6 @@ INSERT INTO users (name, job, city)
 VALUES ('Владимир', 'Таксист', 'Лодзь')
 """)
 
-# Сохраняем изменения
 connection.commit()
 
 # ==================================================
@@ -34,23 +33,28 @@ SELECT * FROM users
 
 users = cursor.fetchall()
 
-print("Все пользователи:\n")
+print("===== ВСЕ ПОЛЬЗОВАТЕЛИ =====")
 
 for user in users:
     print(user)
 
 # ==================================================
-# Ищем пользователя по имени
+# Безопасный поиск пользователя
 # ==================================================
 
-cursor.execute("""
-SELECT * FROM users
-WHERE name = 'Владимир'
-""")
+search_name = "Владимир"
+
+cursor.execute(
+    """
+    SELECT * FROM users
+    WHERE name = ?
+    """,
+    (search_name,)
+)
 
 user = cursor.fetchone()
 
-print("\nПоиск пользователя:\n")
+print("\n===== РЕЗУЛЬТАТ ПОИСКА =====")
 
 if user:
     print(user)
@@ -63,4 +67,4 @@ else:
 
 connection.close()
 
-print("\n✅ Работа с SQLite завершена!")
+print("\n✅ Работа завершена!")
