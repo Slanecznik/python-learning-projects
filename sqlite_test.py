@@ -8,76 +8,35 @@ connection = sqlite3.connect("database.db")
 cursor = connection.cursor()
 
 # ==================================================
-# Добавляем пользователей
-# ==================================================
-
-cursor.execute("""
-INSERT INTO users (name, job, city)
-VALUES ('Владимир', 'Таксист', 'Лодзь')
-""")
-
-cursor.execute("""
-INSERT INTO users (name, job, city)
-VALUES ('Анна', 'Дизайнер', 'Варшава')
-""")
-
-cursor.execute("""
-INSERT INTO users (name, job, city)
-VALUES ('Иван', 'Python Developer', 'Краков')
-""")
-
-connection.commit()
-
-# ==================================================
-# Сортировка по имени
+# Показываем всех пользователей
 # ==================================================
 
 cursor.execute("""
 SELECT *
 FROM users
-ORDER BY name
 """)
 
 users = cursor.fetchall()
 
-print("===== СОРТИРОВКА ПО ИМЕНИ =====")
+print("===== ВСЕ ПОЛЬЗОВАТЕЛИ =====")
 
 for user in users:
     print(user)
 
 # ==================================================
-# Сортировка по профессии
+# Считаем количество пользователей
 # ==================================================
 
 cursor.execute("""
-SELECT *
+SELECT COUNT(*)
 FROM users
-ORDER BY job
 """)
 
-users = cursor.fetchall()
+count = cursor.fetchone()
 
-print("\n===== СОРТИРОВКА ПО ПРОФЕССИИ =====")
+print("\n===== КОЛИЧЕСТВО ПОЛЬЗОВАТЕЛЕЙ =====")
 
-for user in users:
-    print(user)
-
-# ==================================================
-# Сортировка по ID (по убыванию)
-# ==================================================
-
-cursor.execute("""
-SELECT *
-FROM users
-ORDER BY id DESC
-""")
-
-users = cursor.fetchall()
-
-print("\n===== ПОСЛЕДНИЕ ДОБАВЛЕННЫЕ =====")
-
-for user in users:
-    print(user)
+print(count)
 
 # ==================================================
 # Закрываем соединение
