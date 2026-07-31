@@ -53,7 +53,8 @@ jobs = cursor.fetchall()
 print("\n===== ПРОФЕССИИ =====")
 
 for job in jobs:
-    print(job)
+    for job in jobs:
+        print(f"{job[0]}: {job[1]}")
 
 # ==================================================
 # Статистика по городам
@@ -70,8 +71,8 @@ cities = cursor.fetchall()
 print("\n===== ГОРОДА =====")
 
 for city in cities:
-    print(city)
-
+    for city in cities:
+        print(f"{city[0]}: {city[1]}")
 # ==================================================
 # Закрываем соединение
 # ==================================================
