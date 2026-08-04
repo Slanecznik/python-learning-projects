@@ -1,6 +1,6 @@
-from database import load_users
+from database import load_users_sqlite
 
-users_list = load_users()
+users_list = load_users_sqlite()
 
 
 # ========= УНИВЕРСАЛЬНЫЙ ПОИСК =========
