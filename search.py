@@ -1,5 +1,5 @@
 from database import load_users_sqlite
-
+import sqlite3
 users_list = load_users_sqlite()
 
 
@@ -38,7 +38,37 @@ def count_by(field):
 # ========= ПОИСК ПО ИМЕНИ =========
 
 def find_user(name):
-    return find_by("name", name)
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Ищем пользователя
+    cursor.execute("""
+    SELECT name, job, city
+    FROM users
+    WHERE name = ?
+    """, (name,))
+
+    # Получаем одну запись
+    row = cursor.fetchone()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Если пользователь найден
+    if row:
+
+        return {
+            "name": row[0],
+            "job": row[1],
+            "city": row[2]
+        }
+
+    # Если не найден
+    return None
 
 
 # ========= ПОИСК ПО ГОРОДУ =========
