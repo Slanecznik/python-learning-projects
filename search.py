@@ -70,11 +70,47 @@ def find_user(name):
     # Если не найден
     return None
 
-
-# ========= ПОИСК ПО ГОРОДУ =========
+# ==================================================
+# Поиск пользователей по городу
+# ==================================================
 
 def find_city(city):
-    return find_by("city", city)
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Выполняем SQL-запрос
+    cursor.execute("""
+    SELECT name, job, city
+    FROM users
+    WHERE city = ?
+    """, (city,))
+
+    # Получаем все найденные записи
+    rows = cursor.fetchall()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Создаём список пользователей
+    users = []
+
+    # Преобразуем кортежи в словари
+    for row in rows:
+
+        user = {
+            "name": row[0],
+            "job": row[1],
+            "city": row[2]
+        }
+
+        users.append(user)
+
+    # Возвращаем список
+    return users
 
 
 # ========= ПОИСК ПО ПРОФЕССИИ =========
