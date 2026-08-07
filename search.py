@@ -113,10 +113,47 @@ def find_city(city):
     return users
 
 
-# ========= ПОИСК ПО ПРОФЕССИИ =========
+# ==================================================
+# Поиск пользователей по профессии
+# ==================================================
 
 def find_job(job):
-    return find_by("job", job)
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём объект для SQL-запросов
+    cursor = connection.cursor()
+
+    # Выполняем SQL-запрос
+    cursor.execute("""
+    SELECT name, job, city
+    FROM users
+    WHERE job = ?
+    """, (job,))
+
+    # Получаем все найденные записи
+    rows = cursor.fetchall()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Создаём список пользователей
+    users = []
+
+    # Преобразуем кортежи в словари
+    for row in rows:
+
+        user = {
+            "name": row[0],
+            "job": row[1],
+            "city": row[2]
+        }
+
+        users.append(user)
+
+    # Возвращаем список пользователей
+    return users
 
 # ========= СОЗДАНИЕ СООБЩЕНИЯ =========
 
