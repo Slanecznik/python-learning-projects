@@ -81,6 +81,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         ["/find", "поиск пользователя"],
         ["/findcity", "поиск по городу"],
+        ["/findjob", "поиск по профессии"],
         ["/job", "профессия пользователя"],
         ["/hasjob", "проверка профессии"],
 
@@ -337,25 +338,32 @@ async def findcity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Получаем название города
     search_city = context.args[0]
 
-    # Ищем пользователя
-    found_user = find_city(search_city)
+    # Ищем пользователей в базе данных
+    found_users = find_city(search_city)
 
-    # Если нашли
-    if found_user:
-
-        await update.message.reply_text(
-            f"👤 {found_user['name']}\n"
-            f"💼 {found_user['job']}\n"
-            f"🏙 {found_user['city']}"
-        )
-
-    # Если не нашли
-    else:
+    # Если никого не нашли
+    if not found_users:
 
         await update.message.reply_text(
-            "❌ Город не найден"
+            "❌ В этом городе пользователей не найдено."
         )
 
+        return
+
+    # Создаём сообщение
+    message = f"🏙 Пользователи из города {search_city}:\n\n"
+
+    # Перебираем всех найденных пользователей
+    for user in found_users:
+
+        message += (
+            f"👤 {user['name']}\n"
+            f"💼 {user['job']}\n"
+            f"🏙 {user['city']}\n\n"
+        )
+
+    # Отправляем результат
+    await update.message.reply_text(message)
 
 # --------------------------------------------------
 # Команда /job
@@ -411,22 +419,71 @@ async def hasjob(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Получаем профессию
     search_job = context.args[0]
 
-    # Ищем профессию
-    user = find_job(search_job)
+    # Ищем пользователей с этой профессией
+    found_users = find_job(search_job)
 
-    # Если нашли
-    if user:
+    # Если пользователи найдены
+    if found_users:
 
         await update.message.reply_text(
-            "✅ Профессия найдена"
+            f"✅ Профессия «{search_job}» найдена."
         )
 
-    # Если не нашли
+    # Если пользователей нет
     else:
 
         await update.message.reply_text(
-            "❌ Такой профессии нет"
+            f"❌ Профессия «{search_job}» не найдена."
         )
+
+
+# --------------------------------------------------
+# Команда /findjob
+# --------------------------------------------------
+
+async def findjob(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    # Проверяем, указана ли профессия
+    if len(context.args) == 0:
+
+        await update.message.reply_text(
+            "Например:\n/findjob Таксист"
+        )
+
+        return
+
+    # Получаем профессию
+    search_job = context.args[0]
+
+    # Ищем пользователей в базе данных
+    found_users = find_job(search_job)
+
+    # Если никого не нашли
+    if not found_users:
+
+        await update.message.reply_text(
+            "❌ Пользователей с такой профессией не найдено."
+        )
+
+        return
+
+    # Создаём сообщение
+    message = (
+        f"💼 Пользователи с профессией "
+        f"«{search_job}»:\n\n"
+    )
+
+    # Перебираем всех найденных пользователей
+    for user in found_users:
+
+        message += (
+            f"👤 {user['name']}\n"
+            f"💼 {user['job']}\n"
+            f"🏙 {user['city']}\n\n"
+        )
+
+    # Отправляем результат
+    await update.message.reply_text(message)
 
 # ==================================================
 #                  СТАТИСТИКА
@@ -764,9 +821,9 @@ def register_handlers(app):
 
     app.add_handler(CommandHandler("find", find))
     app.add_handler(CommandHandler("findcity", findcity))
+    app.add_handler(CommandHandler("findjob", findjob))
     app.add_handler(CommandHandler("job", job))
     app.add_handler(CommandHandler("hasjob", hasjob))
-
     # ------------------------------
     # Статистика
     # ------------------------------
