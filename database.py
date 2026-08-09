@@ -57,3 +57,74 @@ def load_users_sqlite():
 
     # Возвращаем список
     return users
+
+# ==================================================
+#              СТАТИСТИКА ПО ПРОФЕССИЯМ
+# ==================================================
+
+def count_users_by_job():
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Получаем количество пользователей
+    # по каждой профессии
+    cursor.execute("""
+    SELECT job, COUNT(*)
+    FROM users
+    GROUP BY job
+    """)
+
+    # Получаем все результаты
+    rows = cursor.fetchall()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Превращаем результат в словарь
+    statistics = {}
+
+    for row in rows:
+
+        statistics[row[0]] = row[1]
+
+    return statistics
+
+
+# ==================================================
+#                СТАТИСТИКА ПО ГОРОДАМ
+# ==================================================
+
+def count_users_by_city():
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Получаем количество пользователей
+    # по каждому городу
+    cursor.execute("""
+    SELECT city, COUNT(*)
+    FROM users
+    GROUP BY city
+    """)
+
+    # Получаем все результаты
+    rows = cursor.fetchall()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Превращаем результат в словарь
+    statistics = {}
+
+    for row in rows:
+
+        statistics[row[0]] = row[1]
+
+    return statistics

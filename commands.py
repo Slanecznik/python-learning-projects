@@ -15,6 +15,8 @@ from telegram.ext import (
 from database import (
     load_users,
     save_users,
+    count_users_by_job,
+    count_users_by_city,
 )
 
 from search import (
@@ -524,8 +526,8 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def jobstats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # Получаем статистику профессий
-    jobs = count_by("job")
+    # Получаем статистику профессий из SQLite
+    jobs = count_users_by_job()
 
     # Формируем сообщение
     message = make_stats_message(
@@ -536,15 +538,14 @@ async def jobstats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Отправляем сообщение
     await update.message.reply_text(message)
 
-
 # --------------------------------------------------
 # Команда /citystats
 # --------------------------------------------------
 
 async def citystats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # Получаем статистику городов
-    cities = count_by("city")
+    # Получаем статистику городов из SQLite
+    cities = count_users_by_city()
 
     # Формируем сообщение
     message = make_stats_message(
@@ -554,7 +555,6 @@ async def citystats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Отправляем сообщение
     await update.message.reply_text(message)
-
 
 # --------------------------------------------------
 # Команда /uniquejobs
