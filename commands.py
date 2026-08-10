@@ -17,6 +17,9 @@ from database import (
     save_users,
     count_users_by_job,
     count_users_by_city,
+    get_total_users,
+    get_unique_jobs_count,
+    get_unique_cities_count,
 )
 
 from search import (
@@ -498,27 +501,25 @@ async def findjob(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # Количество пользователей
-    users_count = len(users_list)
+    # Получаем общее количество пользователей
+    users_count = get_total_users()
 
-    # Начинаем счётчики
-    jobs_count = 0
-    cities_count = 0
+    # Получаем количество уникальных профессий
+    jobs_count = get_unique_jobs_count()
 
-    # Перебираем пользователей
-    for user in users_list:
+    # Получаем количество уникальных городов
+    cities_count = get_unique_cities_count()
 
-        jobs_count += 1
-        cities_count += 1
-
-    # Отправляем статистику
-    await update.message.reply_text(
-        f"📊 Статистика\n\n"
+    # Формируем сообщение
+    message = (
+        "📊 Статистика\n\n"
         f"👥 Пользователей: {users_count}\n"
         f"💼 Профессий: {jobs_count}\n"
         f"🏙 Городов: {cities_count}"
     )
 
+    # Отправляем статистику
+    await update.message.reply_text(message)
 
 # --------------------------------------------------
 # Команда /jobstats

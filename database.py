@@ -128,3 +128,86 @@ def count_users_by_city():
         statistics[row[0]] = row[1]
 
     return statistics
+
+# ==================================================
+#             ОБЩАЯ СТАТИСТИКА
+# ==================================================
+
+def get_total_users():
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Считаем всех пользователей
+    cursor.execute("""
+    SELECT COUNT(*)
+    FROM users
+    """)
+
+    # Получаем результат
+    result = cursor.fetchone()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Возвращаем число пользователей
+    return result[0]
+
+
+# ==================================================
+#          КОЛИЧЕСТВО УНИКАЛЬНЫХ ПРОФЕССИЙ
+# ==================================================
+
+def get_unique_jobs_count():
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Считаем уникальные профессии
+    cursor.execute("""
+    SELECT COUNT(DISTINCT job)
+    FROM users
+    """)
+
+    # Получаем результат
+    result = cursor.fetchone()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Возвращаем количество профессий
+    return result[0]
+
+
+# ==================================================
+#             КОЛИЧЕСТВО УНИКАЛЬНЫХ ГОРОДОВ
+# ==================================================
+
+def get_unique_cities_count():
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Считаем уникальные города
+    cursor.execute("""
+    SELECT COUNT(DISTINCT city)
+    FROM users
+    """)
+
+    # Получаем результат
+    result = cursor.fetchone()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Возвращаем количество городов
+    return result[0]
