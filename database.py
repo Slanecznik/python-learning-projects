@@ -211,3 +211,113 @@ def get_unique_cities_count():
 
     # Возвращаем количество городов
     return result[0]
+
+# ==================================================
+#              ПОЛУЧИТЬ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ
+# ==================================================
+
+def get_all_users():
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Получаем всех пользователей
+    cursor.execute("""
+    SELECT name, job, city
+    FROM users
+    ORDER BY id
+    """)
+
+    # Получаем все записи
+    rows = cursor.fetchall()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Создаём список пользователей
+    users = []
+
+    # Преобразуем строки SQLite в словари
+    for row in rows:
+
+        user = {
+            "name": row[0],
+            "job": row[1],
+            "city": row[2]
+        }
+
+        users.append(user)
+
+    # Возвращаем список
+    return users
+
+# ==================================================
+#             ПОЛУЧИТЬ УНИКАЛЬНЫЕ ПРОФЕССИИ
+# ==================================================
+
+def get_unique_jobs():
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Получаем уникальные профессии
+    cursor.execute("""
+    SELECT DISTINCT job
+    FROM users
+    ORDER BY job
+    """)
+
+    # Получаем результаты
+    rows = cursor.fetchall()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Превращаем кортежи в обычный список
+    jobs = []
+
+    for row in rows:
+
+        jobs.append(row[0])
+
+    return jobs
+
+# ==================================================
+#               ПОЛУЧИТЬ УНИКАЛЬНЫЕ ГОРОДА
+# ==================================================
+
+def get_unique_cities():
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Получаем уникальные города
+    cursor.execute("""
+    SELECT DISTINCT city
+    FROM users
+    ORDER BY city
+    """)
+
+    # Получаем результаты
+    rows = cursor.fetchall()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Создаём список городов
+    cities = []
+
+    for row in rows:
+
+        cities.append(row[0])
+
+    return cities

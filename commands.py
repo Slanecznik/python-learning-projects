@@ -20,6 +20,7 @@ from database import (
     get_total_users,
     get_unique_jobs_count,
     get_unique_cities_count,
+    get_all_users, get_unique_jobs, get_unique_cities,
 )
 
 from search import (
@@ -188,17 +189,74 @@ async def whoami(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # Заголовок сообщения
-    message = "👥 Пользователи:\n\n"
+    # Получаем пользователей напрямую из SQLite
+    users_list = get_all_users()
 
-    # Перебираем всех пользователей
+    # Если база пустая
+    if not users_list:
+
+        await update.message.reply_text(
+            "📭 В базе пока нет пользователей."
+        )
+
+        return
+
+    # Создаём сообщение
+    message = "👥 Список пользователей:\n\n"
+
+    # Перебираем пользователей
     for user in users_list:
 
-        message += f"{user['name']} — {user['job']}\n"
+        message += (
+            f"👤 {user['name']}\n"
+            f"💼 {user['job']}\n"
+            f"🏙 {user['city']}\n\n"
+        )
 
-    # Отправляем сообщение
+    # Отправляем результат
     await update.message.reply_text(message)
 
+# --------------------------------------------------
+# Команда /count
+# --------------------------------------------------
+
+async def count(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    # Получаем количество пользователей из SQLite
+    total = get_total_users()
+
+    # Отправляем результат
+    await update.message.reply_text(
+        f"👥 Всего пользователей: {total}"
+    )
+
+# --------------------------------------------------
+# Команда /jobs
+# --------------------------------------------------
+
+async def jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    # Получаем профессии из SQLite
+    jobs_list = get_unique_jobs()
+
+    # Если профессий нет
+    if not jobs_list:
+
+        await update.message.reply_text(
+            "📭 В базе пока нет профессий."
+        )
+
+        return
+
+    # Формируем сообщение
+    message = "💼 Профессии:\n\n"
+
+    for job in jobs_list:
+
+        message += f"• {job}\n"
+
+    # Отправляем результат
+    await update.message.reply_text(message)
 
 # --------------------------------------------------
 # Команда /profile
@@ -273,13 +331,26 @@ async def jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def cities(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    # Получаем города из SQLite
+    cities_list = get_unique_cities()
+
+    # Если городов нет
+    if not cities_list:
+
+        await update.message.reply_text(
+            "📭 В базе пока нет городов."
+        )
+
+        return
+
+    # Формируем сообщение
     message = "🏙 Города:\n\n"
 
-    # Перебираем пользователей
-    for user in users_list:
+    for city in cities_list:
 
-        message += f"• {user['city']}\n"
+        message += f"• {city}\n"
 
+    # Отправляем результат
     await update.message.reply_text(message)
 
 # ==================================================
