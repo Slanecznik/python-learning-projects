@@ -321,3 +321,27 @@ def get_unique_cities():
         cities.append(row[0])
 
     return cities
+
+# ==================================================
+#              ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ
+# ==================================================
+
+def add_user(name, job, city):
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Добавляем пользователя
+    cursor.execute("""
+    INSERT INTO users (name, job, city)
+    VALUES (?, ?, ?)
+    """, (name, job, city))
+
+    # Сохраняем изменения
+    connection.commit()
+
+    # Закрываем соединение
+    connection.close()

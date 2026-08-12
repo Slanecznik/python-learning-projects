@@ -20,7 +20,10 @@ from database import (
     get_total_users,
     get_unique_jobs_count,
     get_unique_cities_count,
-    get_all_users, get_unique_jobs, get_unique_cities,
+    get_all_users,
+    get_unique_jobs,
+    get_unique_cities,
+    add_user,
 )
 
 from search import (
@@ -665,37 +668,38 @@ async def uniquejobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def adduser(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Проверяем количество аргументов
-    if len(context.args) != 3:
+    if len(context.args) < 3:
 
         await update.message.reply_text(
-            "Например:\n/adduser Сергей Таксист Познань"
+            "Использование:\n"
+            "/adduser Имя Профессия Город"
         )
 
         return
 
-    # Получаем данные пользователя
+    # Получаем имя
     name = context.args[0]
+
+    # Получаем профессию
     job = context.args[1]
+
+    # Получаем город
     city = context.args[2]
 
-    # Создаём словарь нового пользователя
-    new_user = {
-        "name": name,
-        "job": job,
-        "city": city
-    }
-
-    # Добавляем пользователя
-    users_list.append(new_user)
-
-    # Сохраняем изменения
-    save_users(users_list)
-
-    # Отправляем сообщение
-    await update.message.reply_text(
-        f"✅ Пользователь {name} успешно добавлен."
+    # Добавляем пользователя в SQLite
+    add_user(
+        name,
+        job,
+        city
     )
 
+    # Сообщаем об успешном добавлении
+    await update.message.reply_text(
+        f"✅ Пользователь добавлен!\n\n"
+        f"👤 Имя: {name}\n"
+        f"💼 Профессия: {job}\n"
+        f"🏙 Город: {city}"
+    )
 
 # --------------------------------------------------
 # Команда /edituser
