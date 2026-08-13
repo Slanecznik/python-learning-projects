@@ -24,6 +24,7 @@ from database import (
     get_unique_jobs,
     get_unique_cities,
     add_user,
+    update_user_job,
 )
 
 from search import (
@@ -708,42 +709,42 @@ async def adduser(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def edituser(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Проверяем количество аргументов
-    if len(context.args) != 3:
+    if len(context.args) < 2:
 
         await update.message.reply_text(
-            "Например:\n/edituser Иван Python Минск"
+            "Использование:\n"
+            "/edituser Имя НоваяПрофессия"
         )
 
         return
 
-    # Получаем данные
-    search_name = context.args[0]
+    # Получаем имя пользователя
+    name = context.args[0]
+
+    # Получаем новую профессию
     new_job = context.args[1]
-    new_city = context.args[2]
 
-    # Ищем пользователя
-    user = find_user(search_name)
+    # Изменяем пользователя в SQLite
+    updated_rows = update_user_job(
+        name,
+        new_job
+    )
 
-    # Если нашли
-    if user:
-
-        user["job"] = new_job
-        user["city"] = new_city
-
-        # Сохраняем изменения
-        save_users(users_list)
+    # Если пользователь найден и изменён
+    if updated_rows > 0:
 
         await update.message.reply_text(
-            f"✅ Пользователь {search_name} успешно обновлён."
+            f"✅ Пользователь изменён!\n\n"
+            f"👤 Имя: {name}\n"
+            f"💼 Новая профессия: {new_job}"
         )
 
-    # Если не нашли
+    # Если пользователь не найден
     else:
 
         await update.message.reply_text(
-            "❌ Пользователь не найден."
+            f"❌ Пользователь «{name}» не найден."
         )
-
 
 # --------------------------------------------------
 # Команда /deleteuser

@@ -345,3 +345,33 @@ def add_user(name, job, city):
 
     # Закрываем соединение
     connection.close()
+
+    # ==================================================
+    #            ИЗМЕНИТЬ ПРОФЕССИЮ ПОЛЬЗОВАТЕЛЯ
+    # ==================================================
+
+    def update_user_job(name, new_job):
+        # Подключаемся к базе данных
+        connection = sqlite3.connect("database.db")
+
+        # Создаём cursor
+        cursor = connection.cursor()
+
+        # Изменяем профессию пользователя
+        cursor.execute("""
+        UPDATE users
+        SET job = ?
+        WHERE name = ?
+        """, (new_job, name))
+
+        # Сохраняем изменения
+        connection.commit()
+
+        # Запоминаем количество изменённых строк
+        updated_rows = cursor.rowcount
+
+        # Закрываем соединение
+        connection.close()
+
+        # Возвращаем количество изменённых записей
+        return updated_rows
