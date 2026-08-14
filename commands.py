@@ -25,6 +25,7 @@ from database import (
     get_unique_cities,
     add_user,
     update_user_job,
+    delete_user,
 )
 
 from search import (
@@ -752,39 +753,34 @@ async def edituser(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def deleteuser(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # Проверяем наличие имени
+    # Проверяем, указано ли имя
     if len(context.args) == 0:
 
         await update.message.reply_text(
-            "Например:\n/deleteuser Иван"
+            "Использование:\n"
+            "/deleteuser Имя"
         )
 
         return
 
     # Получаем имя пользователя
-    search_name = context.args[0]
+    name = context.args[0]
 
-    # Ищем пользователя
-    user = find_user(search_name)
+    # Удаляем пользователя из SQLite
+    deleted_rows = delete_user(name)
 
-    # Если нашли
-    if user:
-
-        # Удаляем пользователя
-        users_list.remove(user)
-
-        # Сохраняем изменения
-        save_users(users_list)
+    # Если пользователь найден и удалён
+    if deleted_rows > 0:
 
         await update.message.reply_text(
-            f"✅ Пользователь {search_name} успешно удалён."
+            f"🗑 Пользователь «{name}» удалён."
         )
 
-    # Если не нашли
+    # Если пользователь не найден
     else:
 
         await update.message.reply_text(
-            "❌ Пользователь не найден."
+            f"❌ Пользователь «{name}» не найден."
         )
 
 # ==================================================

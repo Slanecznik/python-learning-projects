@@ -58,12 +58,12 @@ def load_users_sqlite():
     # Возвращаем список
     return users
 
+
 # ==================================================
 #              СТАТИСТИКА ПО ПРОФЕССИЯМ
 # ==================================================
 
 def count_users_by_job():
-
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
@@ -88,7 +88,6 @@ def count_users_by_job():
     statistics = {}
 
     for row in rows:
-
         statistics[row[0]] = row[1]
 
     return statistics
@@ -99,7 +98,6 @@ def count_users_by_job():
 # ==================================================
 
 def count_users_by_city():
-
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
@@ -124,17 +122,16 @@ def count_users_by_city():
     statistics = {}
 
     for row in rows:
-
         statistics[row[0]] = row[1]
 
     return statistics
+
 
 # ==================================================
 #             ОБЩАЯ СТАТИСТИКА
 # ==================================================
 
 def get_total_users():
-
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
@@ -162,7 +159,6 @@ def get_total_users():
 # ==================================================
 
 def get_unique_jobs_count():
-
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
@@ -190,7 +186,6 @@ def get_unique_jobs_count():
 # ==================================================
 
 def get_unique_cities_count():
-
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
@@ -212,12 +207,12 @@ def get_unique_cities_count():
     # Возвращаем количество городов
     return result[0]
 
+
 # ==================================================
 #              ПОЛУЧИТЬ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ
 # ==================================================
 
 def get_all_users():
-
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
@@ -242,7 +237,6 @@ def get_all_users():
 
     # Преобразуем строки SQLite в словари
     for row in rows:
-
         user = {
             "name": row[0],
             "job": row[1],
@@ -254,12 +248,12 @@ def get_all_users():
     # Возвращаем список
     return users
 
+
 # ==================================================
 #             ПОЛУЧИТЬ УНИКАЛЬНЫЕ ПРОФЕССИИ
 # ==================================================
 
 def get_unique_jobs():
-
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
@@ -283,17 +277,16 @@ def get_unique_jobs():
     jobs = []
 
     for row in rows:
-
         jobs.append(row[0])
 
     return jobs
+
 
 # ==================================================
 #               ПОЛУЧИТЬ УНИКАЛЬНЫЕ ГОРОДА
 # ==================================================
 
 def get_unique_cities():
-
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
@@ -317,17 +310,16 @@ def get_unique_cities():
     cities = []
 
     for row in rows:
-
         cities.append(row[0])
 
     return cities
+
 
 # ==================================================
 #              ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ
 # ==================================================
 
 def add_user(name, job, city):
-
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
@@ -346,32 +338,63 @@ def add_user(name, job, city):
     # Закрываем соединение
     connection.close()
 
-    # ==================================================
-    #            ИЗМЕНИТЬ ПРОФЕССИЮ ПОЛЬЗОВАТЕЛЯ
-    # ==================================================
 
-    def update_user_job(name, new_job):
-        # Подключаемся к базе данных
-        connection = sqlite3.connect("database.db")
+# ==================================================
+#            ИЗМЕНИТЬ ПРОФЕССИЮ ПОЛЬЗОВАТЕЛЯ
+# ==================================================
 
-        # Создаём cursor
-        cursor = connection.cursor()
+def update_user_job(name, new_job):
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
 
-        # Изменяем профессию пользователя
-        cursor.execute("""
-        UPDATE users
-        SET job = ?
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Изменяем профессию пользователя
+    cursor.execute("""
+            UPDATE users
+            SET job = ?
+            WHERE name = ?
+            """, (new_job, name))
+
+    # Сохраняем изменения
+    connection.commit()
+
+    # Запоминаем количество изменённых строк
+    updated_rows = cursor.rowcount
+
+    # Закрываем соединение
+    connection.close()
+
+    # Возвращаем количество изменённых записей
+    return updated_rows
+
+
+# ==================================================
+#              УДАЛИТЬ ПОЛЬЗОВАТЕЛЯ
+# ==================================================
+
+def delete_user(name):
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Удаляем пользователя
+    cursor.execute("""
+        DELETE FROM users
         WHERE name = ?
-        """, (new_job, name))
+        """, (name,))
 
-        # Сохраняем изменения
-        connection.commit()
+    # Сохраняем изменения
+    connection.commit()
 
-        # Запоминаем количество изменённых строк
-        updated_rows = cursor.rowcount
+    # Получаем количество удалённых строк
+    deleted_rows = cursor.rowcount
 
-        # Закрываем соединение
-        connection.close()
+    # Закрываем соединение
+    connection.close()
 
-        # Возвращаем количество изменённых записей
-        return updated_rows
+    # Возвращаем количество удалённых записей
+    return deleted_rows
