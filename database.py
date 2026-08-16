@@ -1,232 +1,30 @@
-import json
+# ==================================================
+#                 ИМПОРТЫ
+# ==================================================
+
 import sqlite3
 
 
-def load_users():
-    with open("users.json", "r", encoding="utf-8") as file:
-        users = json.load(file)
-
-    return users
-
-
-def save_users(users):
-    with open("users.json", "w", encoding="utf-8") as file:
-        json.dump(
-            users,
-            file,
-            ensure_ascii=False,
-            indent=4
-        )
-
-
 # ==================================================
-# Получить пользователей из SQLite
-# ==================================================
-
-def load_users_sqlite():
-    # Подключаемся к базе данных
-    connection = sqlite3.connect("database.db")
-
-    # Создаём cursor
-    cursor = connection.cursor()
-
-    # Выполняем SQL-запрос
-    cursor.execute("""
-            SELECT name, job, city
-            FROM users
-            """)
-
-    # Получаем все записи
-    rows = cursor.fetchall()
-
-    # Создаём пустой список
-    users = []
-
-    # Преобразуем кортежи в словари
-    for row in rows:
-        user = {
-            "name": row[0],
-            "job": row[1],
-            "city": row[2]
-        }
-
-        users.append(user)
-
-    # Закрываем соединение
-    connection.close()
-
-    # Возвращаем список
-    return users
-
-
-# ==================================================
-#              СТАТИСТИКА ПО ПРОФЕССИЯМ
-# ==================================================
-
-def count_users_by_job():
-    # Подключаемся к базе данных
-    connection = sqlite3.connect("database.db")
-
-    # Создаём cursor
-    cursor = connection.cursor()
-
-    # Получаем количество пользователей
-    # по каждой профессии
-    cursor.execute("""
-    SELECT job, COUNT(*)
-    FROM users
-    GROUP BY job
-    """)
-
-    # Получаем все результаты
-    rows = cursor.fetchall()
-
-    # Закрываем соединение
-    connection.close()
-
-    # Превращаем результат в словарь
-    statistics = {}
-
-    for row in rows:
-        statistics[row[0]] = row[1]
-
-    return statistics
-
-
-# ==================================================
-#                СТАТИСТИКА ПО ГОРОДАМ
-# ==================================================
-
-def count_users_by_city():
-    # Подключаемся к базе данных
-    connection = sqlite3.connect("database.db")
-
-    # Создаём cursor
-    cursor = connection.cursor()
-
-    # Получаем количество пользователей
-    # по каждому городу
-    cursor.execute("""
-    SELECT city, COUNT(*)
-    FROM users
-    GROUP BY city
-    """)
-
-    # Получаем все результаты
-    rows = cursor.fetchall()
-
-    # Закрываем соединение
-    connection.close()
-
-    # Превращаем результат в словарь
-    statistics = {}
-
-    for row in rows:
-        statistics[row[0]] = row[1]
-
-    return statistics
-
-
-# ==================================================
-#             ОБЩАЯ СТАТИСТИКА
-# ==================================================
-
-def get_total_users():
-    # Подключаемся к базе данных
-    connection = sqlite3.connect("database.db")
-
-    # Создаём cursor
-    cursor = connection.cursor()
-
-    # Считаем всех пользователей
-    cursor.execute("""
-    SELECT COUNT(*)
-    FROM users
-    """)
-
-    # Получаем результат
-    result = cursor.fetchone()
-
-    # Закрываем соединение
-    connection.close()
-
-    # Возвращаем число пользователей
-    return result[0]
-
-
-# ==================================================
-#          КОЛИЧЕСТВО УНИКАЛЬНЫХ ПРОФЕССИЙ
-# ==================================================
-
-def get_unique_jobs_count():
-    # Подключаемся к базе данных
-    connection = sqlite3.connect("database.db")
-
-    # Создаём cursor
-    cursor = connection.cursor()
-
-    # Считаем уникальные профессии
-    cursor.execute("""
-    SELECT COUNT(DISTINCT job)
-    FROM users
-    """)
-
-    # Получаем результат
-    result = cursor.fetchone()
-
-    # Закрываем соединение
-    connection.close()
-
-    # Возвращаем количество профессий
-    return result[0]
-
-
-# ==================================================
-#             КОЛИЧЕСТВО УНИКАЛЬНЫХ ГОРОДОВ
-# ==================================================
-
-def get_unique_cities_count():
-    # Подключаемся к базе данных
-    connection = sqlite3.connect("database.db")
-
-    # Создаём cursor
-    cursor = connection.cursor()
-
-    # Считаем уникальные города
-    cursor.execute("""
-    SELECT COUNT(DISTINCT city)
-    FROM users
-    """)
-
-    # Получаем результат
-    result = cursor.fetchone()
-
-    # Закрываем соединение
-    connection.close()
-
-    # Возвращаем количество городов
-    return result[0]
-
-
-# ==================================================
-#              ПОЛУЧИТЬ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ
+#             ПОЛУЧИТЬ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ
 # ==================================================
 
 def get_all_users():
+
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
-    # Создаём cursor
+    # Создаём cursor для выполнения SQL-запросов
     cursor = connection.cursor()
 
     # Получаем всех пользователей
     cursor.execute("""
-    SELECT name, job, city
-    FROM users
-    ORDER BY id
+        SELECT name, job, city
+        FROM users
+        ORDER BY id
     """)
 
-    # Получаем все записи
+    # Получаем все найденные строки
     rows = cursor.fetchall()
 
     # Закрываем соединение
@@ -235,8 +33,9 @@ def get_all_users():
     # Создаём список пользователей
     users = []
 
-    # Преобразуем строки SQLite в словари
+    # Преобразуем строки SQLite в словари Python
     for row in rows:
+
         user = {
             "name": row[0],
             "job": row[1],
@@ -245,15 +44,83 @@ def get_all_users():
 
         users.append(user)
 
-    # Возвращаем список
+    # Возвращаем список пользователей
     return users
 
 
 # ==================================================
-#             ПОЛУЧИТЬ УНИКАЛЬНЫЕ ПРОФЕССИИ
+#              ПОЛУЧИТЬ ПЕРВОГО ПОЛЬЗОВАТЕЛЯ
+# ==================================================
+
+def get_first_user():
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Получаем первого пользователя
+    cursor.execute("""
+        SELECT name, job, city
+        FROM users
+        ORDER BY id
+        LIMIT 1
+    """)
+
+    # Получаем одну строку
+    row = cursor.fetchone()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Если пользователь найден
+    if row:
+
+        return {
+            "name": row[0],
+            "job": row[1],
+            "city": row[2]
+        }
+
+    # Если база пустая
+    return None
+
+
+# ==================================================
+#              ОБЩЕЕ КОЛИЧЕСТВО ПОЛЬЗОВАТЕЛЕЙ
+# ==================================================
+
+def get_total_users():
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Считаем все записи
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM users
+    """)
+
+    # Получаем результат
+    result = cursor.fetchone()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Возвращаем количество пользователей
+    return result[0]
+
+
+# ==================================================
+#             УНИКАЛЬНЫЕ ПРОФЕССИИ
 # ==================================================
 
 def get_unique_jobs():
+
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
@@ -262,31 +129,35 @@ def get_unique_jobs():
 
     # Получаем уникальные профессии
     cursor.execute("""
-    SELECT DISTINCT job
-    FROM users
-    ORDER BY job
+        SELECT DISTINCT job
+        FROM users
+        ORDER BY job
     """)
 
-    # Получаем результаты
+    # Получаем все результаты
     rows = cursor.fetchall()
 
     # Закрываем соединение
     connection.close()
 
-    # Превращаем кортежи в обычный список
+    # Создаём список профессий
     jobs = []
 
+    # Преобразуем результаты в обычный список
     for row in rows:
+
         jobs.append(row[0])
 
+    # Возвращаем список профессий
     return jobs
 
 
 # ==================================================
-#               ПОЛУЧИТЬ УНИКАЛЬНЫЕ ГОРОДА
+#               УНИКАЛЬНЫЕ ГОРОДА
 # ==================================================
 
 def get_unique_cities():
+
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
@@ -295,12 +166,12 @@ def get_unique_cities():
 
     # Получаем уникальные города
     cursor.execute("""
-    SELECT DISTINCT city
-    FROM users
-    ORDER BY city
+        SELECT DISTINCT city
+        FROM users
+        ORDER BY city
     """)
 
-    # Получаем результаты
+    # Получаем все результаты
     rows = cursor.fetchall()
 
     # Закрываем соединение
@@ -309,10 +180,145 @@ def get_unique_cities():
     # Создаём список городов
     cities = []
 
+    # Преобразуем результаты в обычный список
     for row in rows:
+
         cities.append(row[0])
 
+    # Возвращаем список городов
     return cities
+
+
+# ==================================================
+#          КОЛИЧЕСТВО УНИКАЛЬНЫХ ПРОФЕССИЙ
+# ==================================================
+
+def get_unique_jobs_count():
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Считаем уникальные профессии
+    cursor.execute("""
+        SELECT COUNT(DISTINCT job)
+        FROM users
+    """)
+
+    # Получаем результат
+    result = cursor.fetchone()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Возвращаем количество
+    return result[0]
+
+
+# ==================================================
+#            КОЛИЧЕСТВО УНИКАЛЬНЫХ ГОРОДОВ
+# ==================================================
+
+def get_unique_cities_count():
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Считаем уникальные города
+    cursor.execute("""
+        SELECT COUNT(DISTINCT city)
+        FROM users
+    """)
+
+    # Получаем результат
+    result = cursor.fetchone()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Возвращаем количество
+    return result[0]
+
+
+# ==================================================
+#          СТАТИСТИКА ПО ПРОФЕССИЯМ
+# ==================================================
+
+def count_users_by_job():
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Группируем пользователей по профессии
+    cursor.execute("""
+        SELECT job, COUNT(*)
+        FROM users
+        GROUP BY job
+        ORDER BY job
+    """)
+
+    # Получаем результаты
+    rows = cursor.fetchall()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Создаём словарь статистики
+    statistics = {}
+
+    # Записываем профессию и количество пользователей
+    for row in rows:
+
+        statistics[row[0]] = row[1]
+
+    # Возвращаем статистику
+    return statistics
+
+
+# ==================================================
+#             СТАТИСТИКА ПО ГОРОДАМ
+# ==================================================
+
+def count_users_by_city():
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Группируем пользователей по городу
+    cursor.execute("""
+        SELECT city, COUNT(*)
+        FROM users
+        GROUP BY city
+        ORDER BY city
+    """)
+
+    # Получаем результаты
+    rows = cursor.fetchall()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Создаём словарь статистики
+    statistics = {}
+
+    # Записываем город и количество пользователей
+    for row in rows:
+
+        statistics[row[0]] = row[1]
+
+    # Возвращаем статистику
+    return statistics
 
 
 # ==================================================
@@ -320,16 +326,17 @@ def get_unique_cities():
 # ==================================================
 
 def add_user(name, job, city):
+
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
     # Создаём cursor
     cursor = connection.cursor()
 
-    # Добавляем пользователя
+    # Добавляем нового пользователя
     cursor.execute("""
-    INSERT INTO users (name, job, city)
-    VALUES (?, ?, ?)
+        INSERT INTO users (name, job, city)
+        VALUES (?, ?, ?)
     """, (name, job, city))
 
     # Сохраняем изменения
@@ -340,10 +347,11 @@ def add_user(name, job, city):
 
 
 # ==================================================
-#            ИЗМЕНИТЬ ПРОФЕССИЮ ПОЛЬЗОВАТЕЛЯ
+#          ИЗМЕНИТЬ ПРОФЕССИЮ ПОЛЬЗОВАТЕЛЯ
 # ==================================================
 
 def update_user_job(name, new_job):
+
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
@@ -352,10 +360,10 @@ def update_user_job(name, new_job):
 
     # Изменяем профессию пользователя
     cursor.execute("""
-            UPDATE users
-            SET job = ?
-            WHERE name = ?
-            """, (new_job, name))
+        UPDATE users
+        SET job = ?
+        WHERE name = ?
+    """, (new_job, name))
 
     # Сохраняем изменения
     connection.commit()
@@ -375,6 +383,7 @@ def update_user_job(name, new_job):
 # ==================================================
 
 def delete_user(name):
+
     # Подключаемся к базе данных
     connection = sqlite3.connect("database.db")
 
@@ -385,7 +394,7 @@ def delete_user(name):
     cursor.execute("""
         DELETE FROM users
         WHERE name = ?
-        """, (name,))
+    """, (name,))
 
     # Сохраняем изменения
     connection.commit()
@@ -398,3 +407,125 @@ def delete_user(name):
 
     # Возвращаем количество удалённых записей
     return deleted_rows
+
+# ==================================================
+#              ПОИСК ПО ИМЕНИ
+# ==================================================
+
+def find_user_by_name(name):
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Ищем пользователя по имени
+    cursor.execute("""
+        SELECT name, job, city
+        FROM users
+        WHERE LOWER(name) = LOWER(?)
+        LIMIT 1
+    """, (name,))
+
+    # Получаем одну запись
+    row = cursor.fetchone()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Если пользователь найден
+    if row:
+
+        return {
+            "name": row[0],
+            "job": row[1],
+            "city": row[2]
+        }
+
+    # Если пользователь не найден
+    return None
+
+
+# ==================================================
+#              ПОИСК ПО ГОРОДУ
+# ==================================================
+
+def find_users_by_city(city):
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Ищем всех пользователей из города
+    cursor.execute("""
+        SELECT name, job, city
+        FROM users
+        WHERE LOWER(city) = LOWER(?)
+        ORDER BY id
+    """, (city,))
+
+    # Получаем все записи
+    rows = cursor.fetchall()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Создаём список пользователей
+    users = []
+
+    # Преобразуем строки в словари
+    for row in rows:
+
+        users.append({
+            "name": row[0],
+            "job": row[1],
+            "city": row[2]
+        })
+
+    # Возвращаем список
+    return users
+
+
+# ==================================================
+#             ПОИСК ПО ПРОФЕССИИ
+# ==================================================
+
+def find_users_by_job(job):
+
+    # Подключаемся к базе данных
+    connection = sqlite3.connect("database.db")
+
+    # Создаём cursor
+    cursor = connection.cursor()
+
+    # Ищем всех пользователей с этой профессией
+    cursor.execute("""
+        SELECT name, job, city
+        FROM users
+        WHERE LOWER(job) = LOWER(?)
+        ORDER BY id
+    """, (job,))
+
+    # Получаем все записи
+    rows = cursor.fetchall()
+
+    # Закрываем соединение
+    connection.close()
+
+    # Создаём список пользователей
+    users = []
+
+    # Преобразуем строки в словари
+    for row in rows:
+
+        users.append({
+            "name": row[0],
+            "job": row[1],
+            "city": row[2]
+        })
+
+    # Возвращаем список
+    return users

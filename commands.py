@@ -13,14 +13,13 @@ from telegram.ext import (
 )
 
 from database import (
-    load_users,
-    save_users,
     count_users_by_job,
     count_users_by_city,
     get_total_users,
     get_unique_jobs_count,
     get_unique_cities_count,
     get_all_users,
+    get_first_user,
     get_unique_jobs,
     get_unique_cities,
     add_user,
@@ -32,17 +31,8 @@ from search import (
     find_user,
     find_city,
     find_job,
-    count_by,
     make_stats_message,
 )
-
-
-# ==================================================
-#               ЗАГРУЖАЕМ ПОЛЬЗОВАТЕЛЕЙ
-# ==================================================
-
-# Загружаем список пользователей из JSON-файла
-users_list = load_users()
 
 
 # ==================================================
@@ -127,7 +117,7 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 # ==================================================
-#            КОМАНДЫ TELEGRAM
+#              КОМАНДЫ TELEGRAM
 # ==================================================
 
 
@@ -137,16 +127,19 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def me(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    # Получаем данные пользователя Telegram
     name = update.effective_user.first_name
     username = update.effective_user.username
     user_id = update.effective_user.id
 
+    # Формируем сообщение
     message = (
         f"👤 Имя: {name}\n"
         f"📛 Username: @{username}\n"
         f"🆔 ID: {user_id}"
     )
 
+    # Отправляем сообщение
     await update.message.reply_text(message)
 
 
@@ -156,8 +149,10 @@ async def me(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def myid(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    # Получаем Telegram ID
     user_id = update.effective_user.id
 
+    # Отправляем ID
     await update.message.reply_text(
         f"Твой Telegram ID: {user_id}"
     )
@@ -169,19 +164,23 @@ async def myid(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def whoami(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    # Создаём словарь с данными Telegram-пользователя
     user = {
         "name": update.effective_user.first_name,
         "username": update.effective_user.username,
         "id": update.effective_user.id,
     }
 
+    # Формируем сообщение
     message = (
         f"👤 Имя: {user['name']}\n"
         f"📛 Username: @{user['username']}\n"
         f"🆔 ID: {user['id']}"
     )
 
+    # Отправляем сообщение
     await update.message.reply_text(message)
+
 
 # ==================================================
 #          ПРОСМОТР ПОЛЬЗОВАТЕЛЕЙ
@@ -194,7 +193,7 @@ async def whoami(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # Получаем пользователей напрямую из SQLite
+    # Получаем пользователей из SQLite
     users_list = get_all_users()
 
     # Если база пустая
@@ -221,6 +220,7 @@ async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Отправляем результат
     await update.message.reply_text(message)
 
+
 # --------------------------------------------------
 # Команда /count
 # --------------------------------------------------
@@ -235,13 +235,14 @@ async def count(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"👥 Всего пользователей: {total}"
     )
 
+
 # --------------------------------------------------
 # Команда /jobs
 # --------------------------------------------------
 
 async def jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # Получаем профессии из SQLite
+    # Получаем уникальные профессии из SQLite
     jobs_list = get_unique_jobs()
 
     # Если профессий нет
@@ -256,6 +257,7 @@ async def jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Формируем сообщение
     message = "💼 Профессии:\n\n"
 
+    # Добавляем профессии
     for job in jobs_list:
 
         message += f"• {job}\n"
@@ -263,21 +265,33 @@ async def jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Отправляем результат
     await update.message.reply_text(message)
 
+
 # --------------------------------------------------
 # Команда /profile
 # --------------------------------------------------
 
 async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # Берём первого пользователя
-    user = users_list[0]
+    # Получаем первого пользователя из SQLite
+    user = get_first_user()
 
+    # Если база пустая
+    if not user:
+
+        await update.message.reply_text(
+            "📭 В базе пока нет пользователей."
+        )
+
+        return
+
+    # Формируем профиль
     message = (
         f"👤 Имя: {user['name']}\n"
         f"💼 Работа: {user['job']}\n"
         f"🏙 Город: {user['city']}"
     )
 
+    # Отправляем профиль
     await update.message.reply_text(message)
 
 
@@ -287,6 +301,19 @@ async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def profiles(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    # Получаем всех пользователей из SQLite
+    users_list = get_all_users()
+
+    # Если база пустая
+    if not users_list:
+
+        await update.message.reply_text(
+            "📭 В базе пока нет пользователей."
+        )
+
+        return
+
+    # Формируем сообщение
     message = "📋 Профили пользователей:\n\n"
 
     # Перебираем пользователей
@@ -298,35 +325,7 @@ async def profiles(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🏙 {user['city']}\n\n"
         )
 
-    await update.message.reply_text(message)
-
-
-# --------------------------------------------------
-# Команда /count
-# --------------------------------------------------
-
-async def count(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    users_count = len(users_list)
-
-    await update.message.reply_text(
-        f"👥 Всего пользователей: {users_count}"
-    )
-
-
-# --------------------------------------------------
-# Команда /jobs
-# --------------------------------------------------
-
-async def jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    message = "💼 Профессии:\n\n"
-
-    # Перебираем пользователей
-    for user in users_list:
-
-        message += f"• {user['job']}\n"
-
+    # Отправляем сообщение
     await update.message.reply_text(message)
 
 
@@ -351,12 +350,14 @@ async def cities(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Формируем сообщение
     message = "🏙 Города:\n\n"
 
+    # Добавляем города
     for city in cities_list:
 
         message += f"• {city}\n"
 
     # Отправляем результат
     await update.message.reply_text(message)
+
 
 # ==================================================
 #                    ПОИСК
@@ -419,7 +420,7 @@ async def findcity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Получаем название города
     search_city = context.args[0]
 
-    # Ищем пользователей в базе данных
+    # Ищем пользователей в базе
     found_users = find_city(search_city)
 
     # Если никого не нашли
@@ -434,7 +435,7 @@ async def findcity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Создаём сообщение
     message = f"🏙 Пользователи из города {search_city}:\n\n"
 
-    # Перебираем всех найденных пользователей
+    # Перебираем найденных пользователей
     for user in found_users:
 
         message += (
@@ -445,6 +446,7 @@ async def findcity(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Отправляем результат
     await update.message.reply_text(message)
+
 
 # --------------------------------------------------
 # Команда /job
@@ -461,7 +463,7 @@ async def job(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         return
 
-    # Получаем имя пользователя
+    # Получаем имя
     search_name = context.args[0]
 
     # Ищем пользователя
@@ -536,7 +538,7 @@ async def findjob(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Получаем профессию
     search_job = context.args[0]
 
-    # Ищем пользователей в базе данных
+    # Ищем пользователей в базе
     found_users = find_job(search_job)
 
     # Если никого не нашли
@@ -554,7 +556,7 @@ async def findjob(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"«{search_job}»:\n\n"
     )
 
-    # Перебираем всех найденных пользователей
+    # Перебираем найденных пользователей
     for user in found_users:
 
         message += (
@@ -565,6 +567,7 @@ async def findjob(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Отправляем результат
     await update.message.reply_text(message)
+
 
 # ==================================================
 #                  СТАТИСТИКА
@@ -597,6 +600,7 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Отправляем статистику
     await update.message.reply_text(message)
 
+
 # --------------------------------------------------
 # Команда /jobstats
 # --------------------------------------------------
@@ -614,6 +618,7 @@ async def jobstats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Отправляем сообщение
     await update.message.reply_text(message)
+
 
 # --------------------------------------------------
 # Команда /citystats
@@ -633,19 +638,24 @@ async def citystats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Отправляем сообщение
     await update.message.reply_text(message)
 
+
 # --------------------------------------------------
 # Команда /uniquejobs
 # --------------------------------------------------
 
 async def uniquejobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # Создаём множество
-    jobs = set()
+    # Получаем уникальные профессии из SQLite
+    jobs = get_unique_jobs()
 
-    # Собираем уникальные профессии
-    for user in users_list:
+    # Если профессий нет
+    if not jobs:
 
-        jobs.add(user["job"])
+        await update.message.reply_text(
+            "📭 В базе пока нет профессий."
+        )
+
+        return
 
     # Формируем сообщение
     message = "💼 Профессии без повторов:\n\n"
@@ -655,8 +665,9 @@ async def uniquejobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         message += f"• {job}\n"
 
-    # Отправляем сообщение
+    # Отправляем результат
     await update.message.reply_text(message)
+
 
 # ==================================================
 #              ИЗМЕНЕНИЕ ДАННЫХ
@@ -703,6 +714,7 @@ async def adduser(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"🏙 Город: {city}"
     )
 
+
 # --------------------------------------------------
 # Команда /edituser
 # --------------------------------------------------
@@ -747,6 +759,7 @@ async def edituser(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"❌ Пользователь «{name}» не найден."
         )
 
+
 # --------------------------------------------------
 # Команда /deleteuser
 # --------------------------------------------------
@@ -782,6 +795,7 @@ async def deleteuser(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             f"❌ Пользователь «{name}» не найден."
         )
+
 
 # ==================================================
 #              СЛУЖЕБНЫЕ КОМАНДЫ
@@ -897,6 +911,7 @@ def register_handlers(app):
     app.add_handler(CommandHandler("findjob", findjob))
     app.add_handler(CommandHandler("job", job))
     app.add_handler(CommandHandler("hasjob", hasjob))
+
     # ------------------------------
     # Статистика
     # ------------------------------
